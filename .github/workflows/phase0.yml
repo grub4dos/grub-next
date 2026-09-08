@@ -1,0 +1,36 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+name: Phase 0
+on: [push, pull_request]
+jobs:
+  baseline:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install build and emulation tools
+        run: sudo apt-get update && sudo apt-get install -y clang lld ninja-build cmake python3 qemu-system-x86 ovmf grub-pc-bin grub-common xorriso mtools
+      - name: Build, reproduce and boot
+        env:
+          SOURCE_DATE_EPOCH: '1704067200'
+        run: python3 tests/phase0.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: phase0-evidence
+          path: |
+            build/phase0/*.log
+            build/phase0/results.json
+            build/phase0/i386-pc/*.elf
+            build/phase0/x86_64-efi/*.efi
+  gcc-compatibility:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install GCC and emulation tools
+        run: sudo apt-get update && sudo apt-get install -y gcc gcc-mingw-w64-x86-64 ninja-build cmake python3 qemu-system-x86 ovmf grub-pc-bin grub-common xorriso mtools
+      - name: Build and boot with GCC
+        run: python3 tests/gcc_smoke.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: gcc-evidence
+          path: build/gcc-smoke/*.log

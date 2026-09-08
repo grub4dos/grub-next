@@ -1,0 +1,66 @@
+{
+  "grub": {
+    "commit": "2f972128c48b90bf8b63aadffe6d546976e1dee6",
+    "files": 2303,
+    "remote": "https://gitlab.freedesktop.org/gnu-grub/grub.git",
+    "sha256": "5e2eadef89dfecb2cf242ec80f33184be3c0f3bfb40da6bd083779e613620e9c",
+    "tree": "e102a3fa208a145cad012148c85e2613b982ce0e"
+  },
+  "grub4dos": {
+    "commit": "cd65de1e1a1fda15de8cc45d09ffa0cfaca9aa7c",
+    "files": 114,
+    "remote": "https://github.com/chenall/grub4dos.git",
+    "sha256": "3d84bc0988d5c48a0e0d317bfcb219eb9f980d088378f965c923d282b3862066",
+    "tree": "7277ca8d9d734fb46cd16550a0a8919c2987aa8a"
+  },
+  "ipxe": {
+    "commit": "ff6e52063e0b37062394fe37b9788af25175e7af",
+    "files": 2247,
+    "remote": "https://github.com/ipxe/ipxe",
+    "sha256": "8cb312429464405e2abc1e1af9977b39d6b77d1966ba53150e8d1c0c6e0f7c3c",
+    "tree": "84a0f3b492cdcce9fd2f3c1ebd9e7717270ea2ee"
+  },
+  "libffi": {
+    "commit": "12ffd1f9dc56fcea79d2f742f424301ae668d663",
+    "files": 491,
+    "remote": "https://github.com/libffi/libffi.git",
+    "sha256": "3ae169991ada00ffe0f5419730931dc581422de2fe1e260cac4d4bb17ecf5136",
+    "tree": "7af6129a956e9974dc20c89ae81f44579833752a"
+  },
+  "lua-5.5.1": {
+    "files": 75,
+    "sha256": "5949c006175fdecc7e8f79005f69775ec40ca4ade14770a24e1d6f1bf6a81b36"
+  },
+  "lvgl": {
+    "commit": "85aa60d18b3d5e5588d7b247abf90198f07c8a63",
+    "files": 4847,
+    "remote": "https://github.com/lvgl/lvgl",
+    "sha256": "424d76bbd867f8dd6c4d03337d4f98e321b3aa4634275b6f7f2e147a9f591596",
+    "tree": "fd5efe2ee55abb93dbdfc7fa6952e81c647d4f70"
+  },
+  "ntloader": {
+    "commit": "744a6108d32ea47df95e9fd1ab42884525685985",
+    "files": 153,
+    "remote": "https://github.com/grub4dos/ntloader",
+    "sha256": "784f018d32309d438289d54b240a7c762522f7a6f854d951ff06b3a13a7ab357",
+    "tree": "8ec380b4038af79478f1ae9c7bec2ebeb41d647a"
+  },
+  "osloader": {
+    "commit": "7278a618349f5bd1914b17c8bd4f5bccec823ed7",
+    "files": 123,
+    "remote": "https://github.com/grub4dos/osloader",
+    "sha256": "326d9d9249e33ad070ebe852ca0fc273c22948049859b88b57223469e554a668",
+    "tree": "900a4a74ad7239f0799a7e0e8885525be6816af0"
+  },
+  "syslinux-6.04-pre1": {
+    "files": 2095,
+    "sha256": "7824ba6d57d7b0a76518d2536bd18fbaa2fdc8b6acaf941af5f156f9500815bd"
+  },
+  "wimboot": {
+    "commit": "e7fab3ca8caba24e05280b6e0869898267cac057",
+    "files": 181,
+    "remote": "https://github.com/ipxe/wimboot",
+    "sha256": "7db8bbfa2ca9aa7cb316dc0c1bf4fb232bee06e4583800bfe27dc9e9c79af65c",
+    "tree": "b83053dd389377c02aedf421af28f649f05ace73"
+  }
+}

@@ -1,0 +1,11 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+set(CMAKE_SYSTEM_NAME Generic)
+set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
+set(CMAKE_C_COMPILER clang)
+set(CMAKE_ASM_COMPILER clang)
+set(CMAKE_C_COMPILER_TARGET "x86_64-pc-windows-msvc")
+set(CMAKE_ASM_COMPILER_TARGET "x86_64-pc-windows-msvc")
+set(BOOT_TARGET "x86_64-efi" CACHE STRING "Runtime target")
+set(CMAKE_C_FLAGS_INIT "--target=x86_64-pc-windows-msvc -march=x86-64 -mno-red-zone")
+set(CMAKE_ASM_FLAGS_INIT "--target=x86_64-pc-windows-msvc -march=x86-64 -mno-red-zone")
+set(CMAKE_EXE_LINKER_FLAGS_INIT "--target=x86_64-pc-windows-msvc -fuse-ld=lld")

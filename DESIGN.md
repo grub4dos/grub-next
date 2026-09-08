@@ -82,6 +82,19 @@ GNU GRUB 2 代码按其 GPLv3-or-later 条款使用。GRUB Legacy 和 GRUB4DOS �
 | BIOS INT 13h map | 是 | 否 | 否 |
 | EFI Block I/O map | 否 | 是 | 是 |
 
+### 5.2 Floating-point baseline
+
+所有平台使用 eager hard-float，不采用 lazy FP。x86_64 EFI 以 x86-64-v1 的 SSE/SSE2
+为基线；ARM64 EFI 使用 FP/SIMD；LoongArch64 EFI 使用 LP64D。
+i386 BIOS/EFI 要求 SSE2，编译使用 `-msse2 -mfpmath=sse`，最低 CPU 为 Pentium 4
+同等级特性集合。不默认启用 `-mno-80387`，保留标准 i386 浮点返回约定的兼容空间。
+
+BIOS startup 必须在执行 C/浮点代码前检查 CPUID、FPU、FXSR、SSE、SSE2；
+清除 CR0.EM/TS，设置 CR0.MP/NE 和 CR4.OSFXSR/OSXMMEXCPT。缺少特性时走整数错误路径。
+UEFI 入口遵循固件架构执行约定。每个正式 handoff 前必须规范化 FP state：
+x86 使用 FNINIT 和默认 MXCSR 0x1F80；ARM64 清理 FPCR/FPSR；LoongArch 规范化 FCSR。
+其他架构入口及正式 handoff 的实现属于 Phase 1 及 loader 阶段，不由 Phase 0 配置探针代替。
+
 ## 6. Execution and lifecycle model
 
 core 采用单 CPU、单线程、轮询式模型。不得引入抢占式 scheduler 或模块并发卸载。

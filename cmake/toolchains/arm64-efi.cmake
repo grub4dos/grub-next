@@ -1,0 +1,11 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+set(CMAKE_SYSTEM_NAME Generic)
+set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
+set(CMAKE_C_COMPILER clang)
+set(CMAKE_ASM_COMPILER clang)
+set(CMAKE_C_COMPILER_TARGET "aarch64-none-elf")
+set(CMAKE_ASM_COMPILER_TARGET "aarch64-none-elf")
+set(BOOT_TARGET "arm64-efi" CACHE STRING "Runtime target")
+set(CMAKE_C_FLAGS_INIT "--target=aarch64-none-elf -march=armv8-a")
+set(CMAKE_ASM_FLAGS_INIT "--target=aarch64-none-elf -march=armv8-a")
+set(CMAKE_EXE_LINKER_FLAGS_INIT "--target=aarch64-none-elf -fuse-ld=lld")
