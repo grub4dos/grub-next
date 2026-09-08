@@ -24,6 +24,9 @@ CMake 是唯一构建描述；脚本只能编排 CMake、生成数据和测试�
 ## Runtime 约束
 
 只支持设计列出的五个 target；单 CPU、单线程、轮询，不使用 lazy FP。
+Lua 固定为 5.5.1，与 `ref/lua-5.5.1/` 和来源锁一致。
+BIOS 高物理内存遵循 DESIGN.md §7.1：64 位地址/长度、PAE 窗口、低地址 bounce buffer；
+map --mem 支持高地址驻留，initrd 最终位置须遵守目标协议，不能因 core 为 i386 而一律限制在低 4 GiB。
 API 显式返回 `boot_status_t`，不恢复全局 `grub_errno`。
 最低层日志和错误路径不依赖 Lua、LVGL、文件系统或模块。串口轮询必须有界。
 BIOS 在运行 C/SSE 指令前检查 CPUID/FPU/FXSR/SSE/SSE2 并设置 CR0/CR4。

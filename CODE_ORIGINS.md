@@ -34,8 +34,8 @@ python3 tools/check_references.py
 | `syslinux-6.04-pre1` | `非 Git 发布目录` | 迁移时按文件审查；未导入 |
 | `wimboot` | `e7fab3ca8caba24e05280b6e0869898267cac057` | GPL-2.0-or-later |
 
-Lua 输入为 5.5.1，不能满足 DESIGN.md 的 Lua 5.4 要求。Phase 6 必须取得并固定 5.4.x，
-或经用户明确决定修改设计；不能静默替换。本阶段没有链接 Lua、libffi、LVGL。
+Lua 固定为 5.5.1，与 DESIGN.md、plan.md 和 `ref/lua-5.5.1/` 的来源锁一致。
+本阶段没有链接 Lua、libffi、LVGL。
 LVGL 内嵌第三方组件等不因顶层许可而自动归入 MIT，正式迁移逐文件审核。
 
 ## 本阶段参考位置与结果
@@ -50,3 +50,14 @@ LVGL 内嵌第三方组件等不因顶层许可而自动归入 MIT，正式迁�
 
 后续每次移植必须增加“目的文件 → 源文件及 commit → 保留版权 → 改动摘要 → 验证”记录，
 不能把此基线表当作已经完成存储、map 或 Windows loader 移植的证明。
+
+## BIOS 高内存设计参考
+
+- `ref/grub4dos/stage2/builtins.c`：`map --mem --top` 的高内存选择。
+- `ref/grub4dos/stage2/asm.S`：`int13_paemove` / `int13_lm64move_lm64_start` 的窗口搬运与模式切换。
+- `ref/wimboot/src/paging.c`、`src/main.c`：`relocate_memory_high()` 的 PAE / 2 MiB 窗口搬运、原虚拟地址重映射、INT 13h callback 分页切换及 Windows 启动交接处理。
+- `ref/syslinux-6.04-pre1/memdisk/setup.c`、`memdisk.inc`：驻留/E820/BIOS 传输；
+  `setup.c` 明确将地址限制在低 4 GiB，不能将其视为高地址实现。
+- `ref/grub/include/grub/i386/linux.h`：Linux initrd 地址限制、扩展字段及能力标识。
+
+这些条目仅为设计依据；高内存 allocator、initrd loader 和驻留 map 实现分别属于 Phase 1、7、8、9。

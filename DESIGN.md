@@ -155,6 +155,45 @@ Resident 对象必须自包含，不得引用 BL 或 Loader memory。所有字�
 
 UEFI BS/RT driver 的 code/data 内存由固件根据 PE subsystem 分配和管理，不属于项目 allocator。
 
+### 7.1 BIOS high physical memory
+
+BIOS `map --mem` 和 initrd 应充分利用 4 GiB（0x100000000）以上的可用物理内存，
+不得因 i386 core 的 32 位指针而把物理内存分配统一限制在 4 GiB 以下。
+这不增加新的所有权类别：准备启动的 initrd 属于 Loader，跨 handoff 的 memdisk 属于 Resident。
+
+- 物理地址、区域长度及地址运算使用明确的 64 位整数；不得通过 `uintptr_t`、普通 C 指针
+  或 Lua double 保存高物理地址。每次范围运算检查溢出、E820 可用范围、保留区和 CPU 物理地址位宽。
+- 在具备 PAE 的 CPU 上实现受控映射窗口与分块物理内存读写/搬运，使不支持 long mode 的
+  SSE2 CPU 也能使用高内存；long mode 搬运可以作为已检测能力下的优化，不能成为高内存的唯一实现。
+  SSE2 不代替 PAE 能力检查。缺少高地址访问能力或可用区域时，回退到满足约束的低地址内存；
+  容量不足则在 prepare 阶段返回明确错误，不得截断地址或静默缩小映像。
+- bulk data 优先放入高内存，按调用约束保留低地址空间给 BIOS handler、thunk、页表、
+  boot parameters 和 bounce buffer。窗口映射只产生短期可用的虚拟地址，不可当作永久物理指针保存。
+- BIOS/INT 13h 调用不能直接消费高地址 buffer 时，经符合固件地址/大小约束的 bounce buffer
+  分块传输。模式切换和窗口操作必须保持或恢复调用者的 CPU、分页、段寄存器及 FP 状态，
+  不得破坏 eager FP 或 BIOS handler 返回约定。
+- 分配器、copy、校验和加载路径均须区分“位于 4 GiB 以上”与“数据大小超过 4 GiB”，
+  支持跨越 4 GiB 边界的区域；单次映射/传输大小仍按窗口和 provider 限制分块。
+
+`map --mem` 的高地址数据、驻留访问代码、页表、bounce buffer 和必要描述必须在 commit 后
+自包含，不引用 BL/Loader 对象；通过统一 E820 handler 保留实际 Resident 区域，并由 BMIT
+以 64 位物理地址/长度描述。下一级通过 INT 13h 访问 memdisk 时，无需自身具备高地址指针。
+
+initrd 的高地址暂存能力不代表任意启动协议都能传递高地址。loader 必须检查所选入口、
+协议版本、地址/长度字段及目标能力；Linux 必须遵守适用的 `initrd_addr_max`，仅在所选入口
+确实支持高地址 initrd 时使用 `ext_ramdisk_image` / `ext_ramdisk_size` 等扩展字段。
+否则在 prepare 中搬到协议允许的区域，无法容纳则失败并回滚。上级传入的 initrd/resource
+同样按输入协议解析，不得为只有 32 位地址字段的入口假设不存在的高位信息。
+
+参考 `ref/grub4dos/stage2/builtins.c` 的高内存选择及 `stage2/asm.S` 的 PAE/long-mode
+INT 13h 搬运。`ref/wimboot/src/paging.c` 的 `relocate_memory_high()` 提供基于 PAE 的
+2 MiB 窗口搬运，将 initrd 移到 4 GiB 以上并重映射原虚拟地址；`src/main.c` 在 INT 13h
+callback 周围启用/恢复分页，供 Windows 启动过程访问高地址数据。此模式应作为 BIOS
+Windows loader / WIM 资源高内存使用的参考，不能泛化成 Linux initrd 的直接高地址交接。
+其交接描述处理属于 wimboot 自身约定，新项目仍须按统一 Resident/E820/BMIT 契约保留数据。
+`ref/syslinux-6.04-pre1/memdisk` 用于驻留布局、E820 和 BIOS 传输设计参考；
+其 `setup.c` 明确限制 32 位地址，不能作为已经支持 4 GiB 以上 RAM disk 的证据。
+
 ## 8. Build system
 
 CMake 是唯一构建描述。Makefiles 或 Ninja files 只作为 CMake generator 输出；平台最终布局由 linker scripts 定义。
@@ -248,7 +287,7 @@ Lua 完全取代 GRUB parser、GRUB shell、`grub.cfg` 和旧菜单脚本系统�
 
 要求如下：
 
-- 固定使用明确的 Lua 5.4 版本线。
+- 固定使用 Lua 5.5.1，与 `ref/lua-5.5.1/` 的来源锁保持一致。
 - 只接受 UTF-8 Lua source，不加载 Lua bytecode。
 - 禁止标准 `io`、`os` 和任意 native library loading。
 - 对内存和指令执行设置限制。
@@ -403,6 +442,7 @@ BIOS map 使用 blocklist 到 INT 13h 的转换。下一级启动后只保留：
 - BMIT/anchor。
 
 不能降级为物理 blocklist 的来源必须转换为 memdisk、明确保留完整后端，或在 prepare 阶段拒绝导出。
+高地址 memdisk 的分配、驻留搬运和 E820 保留必须遵循 §7.1，不能把 BIOS map 默认限制在低 4 GiB。
 
 ### 16.2 UEFI map
 

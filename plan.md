@@ -40,6 +40,7 @@
 
 - 实现 platform API：console、time、memory map、reset、halt、firmware information。
 - 实现 BL、Loader、Resident 三类 allocator。
+- 按 DESIGN.md §7.1 实现 BIOS 64 位物理区域管理、PAE 映射窗口和分块 copy；检测 PAE/物理地址位宽，预留低地址页表及 bounce buffer，支持高于及跨越 4 GiB 的区域；参考 ref/wimboot/src/paging.c 的 PAE 窗口搬运。
 - 实现统一 `boot_context`。
 - 实现 Multiboot2 i386 entry。
 - 实现 Linux x86 boot protocol entry。
@@ -50,7 +51,8 @@
 
 - 所有入口转换成同一 `boot_context`。
 - Loader allocation 可以整体 abort/commit。
-- Resident allocation 在 BIOS E820 中正确保留。
+- Resident allocation 在 BIOS E820 中正确保留，包括 4 GiB 以上区域。
+- QEMU 配置超过 4 GiB RAM，验证高地址及跨 4 GiB 边界的分块读写/哈希；覆盖有 PAE 无 long mode、无 PAE、低内存不足及溢出拒绝路径。
 - UEFI 可以正确识别 BS/RT/Loader memory types。
 - 故意触发 panic 时，Lua/LVGL 尚未存在也能输出并 reset/halt。
 
@@ -134,7 +136,7 @@
 
 ### Work
 
-- 移植固定版本 Lua 5.4。
+- 移植固定版本 Lua 5.5.1（`ref/lua-5.5.1/`）。
 - 实现受限 allocator、instruction limit 和受限标准库。
 - 定义 disk/fs/module/menu/boot Lua APIs。
 - 实现 Lua source loader，不支持 bytecode。
@@ -155,6 +157,7 @@
 
 - 定义统一 `boot_plan` 和 loader prepare/execute API。
 - 实现 BIOS Linux x86 loader。
+- initrd 优先使用可用高物理内存；按目标入口和协议协商最终地址/长度，不支持高地址交接时在 prepare 搬到允许区域，否则失败回滚。
 - 实现 Multiboot 1/2 loader。
 - 实现 EFI application chainloader。
 - 实现 EFI Linux stub/UKI chainload。
@@ -166,6 +169,7 @@
 - prepare 阶段所有错误均可返回菜单。
 - commit 后任何 loader return 都进入 fatal/reset。
 - Linux、Multiboot2 和 EFI application 可在对应 QEMU target 自动启动并输出成功标记。
+- 验证 initrd 高地址暂存、支持该能力的入口交接、受限入口低地址搬运和容量不足回滚；分别测试地址超过 4 GiB 与大小超过 4 GiB，确认未截断地址/长度。
 - EFI target images 全部通过固件 `LoadImage()`加载。
 
 ## 10. Phase 8: Windows and legacy loaders
@@ -174,6 +178,7 @@
 
 - 移植 NTLDR、DOS 和 FreeLdr chainload。
 - 集成 NT6 `bootmgr.exe`/wimboot 路径。
+- 参考 ref/wimboot/src/paging.c、src/main.c，将 BIOS initrd/WIM 资源搬入 4 GiB 以上物理内存，通过受控分页 callback 访问，并适配统一驻留与交接契约。
 - 集成 NT5 `osloader.exe`相关路径。
 - 对外提供统一 Windows boot request，内部按 BIOS/EFI 和 NT 版本分流。
 - 增加 WIM、VHD/VHDX 和文件注入相关测试。
@@ -181,6 +186,7 @@
 ### Acceptance
 
 - BIOS 下可自动测试 FreeDOS、FreeLdr/ReactOS 和目标 NT loader 路径。
+- BIOS Windows 路径验证高地址 initrd/WIM 经 callback 读取的数据一致性、分页/FP 状态恢复及低内存释放；高地址内存保留不得依赖 BL 对象。
 - EFI 下 Windows 路径使用 `bootmgfw.efi`或其他标准 EFI target。
 - loader 不依赖 BSD/XNU 等已删除代码。
 
@@ -193,7 +199,8 @@
 - 实现 map transaction。
 - 移植 GRUB4DOS blocklist解析和 INT 13h map handler。
 - 实现 drive swapping、floppy/HDD/CD presentation。
-- 实现 Resident handler/blocklist/memdisk layout。
+- 实现 Resident handler/blocklist/memdisk layout，支持高于及跨越 4 GiB 的 memdisk；驻留页表与 bounce buffer 自包含，INT 13h 分块访问不依赖 BL 内存。
+- 参考 ref/grub4dos 的 PAE/long-mode 搬运及 ref/syslinux-6.04-pre1/memdisk 的驻留/E820 管理；后者的 32 位地址限制不沿用为新项目上限。
 - 实现统一 INT 15h E820 reservation。
 
 ### Acceptance
@@ -202,7 +209,8 @@
 - 磁盘交换按事务一次性提交，不受命令执行顺序破坏。
 - fragmented physical blocklist 和 memdisk 测试通过。
 - cryptodisk/LVM 等不可物理化来源会转 memdisk 或明确拒绝。
-- chainload 后 BL memory 可被覆盖而 resident map 仍工作。
+- chainload 后 BL memory 可被覆盖而 resident map 仍工作，包括位于 4 GiB 以上的 memdisk。
+- 验证高地址与超过 4 GiB 大小的映像、跨边界 INT 13h 传输及 E820/BMIT 保留；检查数据哈希、模式切换后 CPU/FP 状态和低地址 buffer 不足错误路径。
 
 ## 12. Phase 10: UEFI Block I/O map
 

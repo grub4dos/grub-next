@@ -71,10 +71,18 @@ ARM64/LoongArch 的编译对象架构已检查，LoongArch ELF flags 为 0x43（
 - ref/grub4dos 的当前 loader 提供 Multiboot1 路径，未发现 Multiboot2 直接加载实现。
   因此本阶段不声称 GRUB4DOS 直接启动成功，也不为此偷偷加入另一套 legacy 入口。
   后续 Linux boot protocol stage2 可提供相应兼容路径。
-- ref/lua-5.5.1 与设计要求 Lua 5.4 不符；Phase 6 前必须固定正确版本或取得明确设计调整。
+- Lua 版本已按用户决定统一为 5.5.1，与 ref/lua-5.5.1 来源锁一致；移植仍在 Phase 6。
 - hello 有意返回固件测试父映像；这不是最终产品的 handoff 策略。
 - 还没有 allocator、统一 boot_context、memory map、EFI protocol console、Lua、模块、存储、map、BMIT、
   Linux protocol stage2、正式 loader 或安全启动闭环；这些按 plan.md 后续阶段实现。
 - 本阶段测试未启用 Secure Boot，不代表 Secure Boot 或实际硬件认证。
 
 下一步按 Phase 1 建立统一 boot_context、三类内存所有权、完整平台入口和 fatal/reset 路径。
+
+## 后续设计更新
+
+Lua 基线统一为 5.5.1。DESIGN.md §7.1 增加 BIOS map --mem / initrd 使用 4 GiB 以上物理内存的要求，
+并在 Phase 1、7、8、9 加入实现项与边界验收。已核对 GRUB4DOS 的 PAE/long-mode 搬运，
+ref/wimboot 的 initrd 高地址搬运与分页 callback，
+以及实际路径 `ref/syslinux-6.04-pre1/memdisk` 的驻留管理和 32 位地址限制。
+本次为文档一致性与设计更新，没有新增 runtime 高内存支持；Phase 0 测试结论不变。
