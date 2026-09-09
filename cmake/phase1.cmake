@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
-set(BOOT_COMMON core/memory.c core/physical.c core/context.c core/console.c core/string.c core/efi_memory.c)
+set(BOOT_COMMON core/memory.c core/physical.c core/context.c core/console.c core/string.c core/efi_memory.c core/elf.c)
 if(BOOT_TARGET STREQUAL "host")
     add_executable(boot-core-test tests/core_test.c ${BOOT_COMMON})
     target_compile_options(boot-core-test PRIVATE -UNDEBUG)

@@ -60,7 +60,7 @@
 
 ### Work
 
-- 实现 ELF ET_DYN loader。
+- 已完成 ELF ET_DYN 映像 loader（2026-09-09）；接口、受限 profile 和验证边界见 `docs/elf-loader.md`。
 - 只支持白名单 relocation。
 - 实现 module ELF note、UUID、ABI 和 capability validation。
 - 实现 `boot_api` table。

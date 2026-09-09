@@ -70,8 +70,47 @@ CI 已加入同一验证流程；这里仅声明本地执行结果，没有远�
 - LoongArch 本次使用 QEMU 9.2.2 和固定 EDK2 固件；系统 QEMU 8.2 无法加载该 16 MiB 固件。
 - 最低层文本输出用于 ASCII 诊断；完整 UTF-8 UI 与字体在后续阶段实现。
 
-下一阶段为 Phase 2 ELF module ABI/SDK。完整调用约束及来源见
+Phase 2 ELF module ABI/SDK 的 ET_DYN 映像 loader 已完成，见下文。Phase 1 完整调用约束及来源见
 [docs/phase1.md](docs/phase1.md) 和 [CODE_ORIGINS.md](CODE_ORIGINS.md)。
+
+## Phase 2：ELF ET_DYN loader（2026-09-09）
+
+本次完成 `plan.md` 的“实现 ELF ET_DYN loader”项。
+
+- `core/elf.c` / `include/boot/elf.h`：无 libc 的 inspect/load API；ELF32/64 little-endian
+  四种机器类型覆盖五个 target，完整校验 PT_LOAD / PT_DYNAMIC / SysV hash / dynsym，
+  装载文件段、清零 BSS/空洞并定位唯一 `boot_module_entry`。
+- 最小白名单为 i386 REL 和其余架构 RELA 的 RELATIVE；拒绝外部 imports、依赖、TLS、
+  IFUNC、PLT、text relocation、非法/重复/乱序修补位置及越界/溢出输入。
+- 校验成功前不写目标；调用方提供可寻址 BL buffer，负责后续执行权限和 I-cache 同步。
+  loader 不调用入口、不分配内存、不提供卸载接口。profile 的全部限制见
+  [docs/elf-loader.md](docs/elf-loader.md)。
+- CMake 动态生成真实 ELF fixture，未提交二进制；所有 target 共用同一 loader 源码。
+  i386 运算不引入 `__udivdi3` / `__umoddi3` 等 host/runtime helper。
+
+本次已执行（Ubuntu/WSL）：
+
+```sh
+python3 tests/elf.py
+SOURCE_DATE_EPOCH=1704067200 python3 tests/phase0.py
+SOURCE_DATE_EPOCH=1704067200 python3 tests/phase1.py
+python3 tests/gcc_smoke.py
+git diff --check
+```
+
+结果：host 五项 CTest 全部通过；x86_64 真实模块实际执行返回 42，验证初始化数据、
+两处指针重定位和 BSS。无 section table 的文件、逐字节截断和 10,000 次确定性变异
+通过 ASan/UBSan；拒绝路径确认目标内存保持原值。四种 ELF 架构的真实链接产物均在
+host 完成装载和独立重定位/BSS 检查。日志与 SHA-256 在 `build/elf/commands.log`、
+`build/elf/results.json`；Phase 0/1 原始串口和 results.json 仍在各自目录。
+
+Phase 0 全套回归、Phase 1 九个 QEMU 场景与独立源码路径双构建通过；GCC 兼容回归通过。
+命令输出另保留在 `build/elf/{phase0,phase1,gcc-smoke}.log`。
+QEMU 仅回归原有启动路径，没有在固件中调用新 ELF 入口；跨架构 fixture 装载也不等于
+跨架构执行。没有声称 SDK 样本已在所有固件 target 运行。
+
+后续 Phase 2 仍需 ELF note/UUID/ABI/capability 校验、boot_api、注册事务、重复加载状态、
+正式模块调用的平台适配和 external SDK。本次不改 ref/、来源锁，不提交或推送。
 
 ## Phase 0 保留基线
 
