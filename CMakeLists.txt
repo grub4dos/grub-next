@@ -24,6 +24,7 @@ if(BOOT_TARGET STREQUAL "host")
     add_test(NAME host-version COMMAND boot-info --version)
     add_test(NAME host-invalid COMMAND boot-info --invalid)
     set_tests_properties(host-invalid PROPERTIES WILL_FAIL TRUE)
+    include(cmake/phase1.cmake)
     return()
 endif()
 add_compile_options(-ffreestanding -fno-stack-protector -fno-builtin
@@ -61,3 +62,5 @@ else()
     # Phase 0 configuration/compile probe, not a bootable EFI image.
     add_library(boot-runtime STATIC core/status.c)
 endif()
+
+include(cmake/phase1.cmake)

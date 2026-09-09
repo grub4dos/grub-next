@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
-name: Phase 0
+name: Platform core
 on: [push, pull_request]
 jobs:
   baseline:
@@ -34,3 +34,36 @@ jobs:
         with:
           name: gcc-evidence
           path: build/gcc-smoke/*.log
+
+  phase1:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install platform test dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang lld ninja-build cmake python3 python3-venv \
+            qemu-system-x86 qemu-system-arm ovmf ovmf-ia32 qemu-efi-aarch64 \
+            grub-pc-bin grub-common xorriso mtools gcc g++ pkg-config \
+            libglib2.0-dev libpixman-1-dev libfdt-dev
+      - name: Prepare pinned LoongArch emulator and firmware
+        run: python3 tools/prepare_phase1.py
+      - name: Build, reproduce and boot every entry
+        env:
+          SOURCE_DATE_EPOCH: '1704067200'
+        run: python3 tests/phase1.py
+      - name: Host memory and parser sanitizers
+        run: |
+          cmake -S . -B build/sanitizers -G Ninja -DCMAKE_C_COMPILER=clang -DCMAKE_BUILD_TYPE=Debug -DBOOT_SANITIZERS=ON
+          cmake --build build/sanitizers
+          ctest --test-dir build/sanitizers --output-on-failure
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: phase1-evidence
+          path: |
+            build/phase1/*.log
+            build/phase1/results.json
+            build/phase1/*/*.elf
+            build/phase1/*/*.efi
+            build/phase1/*/*.bz

@@ -31,3 +31,25 @@ qemu(out, "gcc-efi", ["-drive", f"if=pflash,format=raw,readonly=on,file={code}",
      "-drive", f"format=raw,file=fat:rw:{out / 'esp'}"],
      ["BOOT:PASS:fp-state", "BOOT:PASS:invalid-pe-rejected", "BOOT:PASS:LoadImage",
       "BOOT:HELLO:x86_64-efi", "BOOT:PASS:StartImage"])
+
+# Exercise the same Phase 1 product paths with GCC-produced images.
+from phase1 import qemu as qemu_core, COMMON
+shutil.copyfile(out/"i386-pc/boot-core.elf", iso_root/"boot/core.elf")
+(iso_root/"boot/grub/grub.cfg").write_text(
+    'set timeout=0\nmenuentry "GCC core" { multiboot2 /boot/core.elf; boot; }\n')
+run("grub-mkrescue", "-o", out/"core.iso", iso_root)
+qemu_core(out, "gcc-core-bios", "qemu-system-x86_64",
+    ["-m","6G","-cpu","qemu32,+pae,-lm","-cdrom",out/"core.iso","-boot","d"],
+    COMMON+["BOOT:PASS:context:multiboot2","BOOT:PASS:high-pae-copy-hash-fp",
+            "BOOT:PASS:resident-int15-e820"])
+qemu_core(out, "gcc-core-linux", "qemu-system-x86_64",
+    ["-m","6G","-cpu","qemu32,+pae,-lm","-kernel",out/"i386-pc/boot-linux.bz"],
+    COMMON+["BOOT:PASS:context:linux","BOOT:PASS:high-pae-copy-hash-fp",
+            "BOOT:PASS:resident-int15-e820"])
+assert "BOOT:PASS:linux-real-setup" in (out/"gcc-core-linux.debug.log").read_text()
+shutil.copyfile(out/"x86_64-efi/boot-core.efi", esp/"BOOTX64.EFI")
+qemu_core(out, "gcc-core-efi", "qemu-system-x86_64",
+    ["-m","256M","-drive",f"if=pflash,format=raw,readonly=on,file={code}",
+     "-drive",f"if=pflash,format=raw,file={out/'vars.fd'}",
+     "-drive",f"format=raw,file=fat:rw:{out/'esp'}"],
+    COMMON+["BOOT:PASS:efi-context:x86_64-efi","BOOT:PASS:efi-firmware-reservations"])

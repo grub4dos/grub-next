@@ -1,67 +1,89 @@
 # grub-next
 
 依据 [DESIGN.md](DESIGN.md) 和 [plan.md](plan.md) 开发的新 bootloader。
-当前阶段为 Phase 0：最小 Multiboot2 BIOS stage2、x64 EFI hello 与其固件测试父映像。
-项目整体采用 GPL-3.0-or-later，见 [LICENSE](LICENSE)；来源见 [CODE_ORIGINS.md](CODE_ORIGINS.md)。
+当前交付 Phase 1 平台和内存核心：BIOS Multiboot2/Linux 入口、四种 EFI 映像、统一 context、
+三类内存所有权及 BIOS PAE 高内存访问。启动后运行验收探针，故意 panic/reset；尚无菜单或 OS loader。
+项目采用 GPL-3.0-or-later，来源见 [CODE_ORIGINS.md](CODE_ORIGINS.md)。
 
-## 构建与验证
+## 构建与运行
 
 在 Ubuntu 24.04 / WSL Ubuntu 中安装依赖：
 
 ```sh
 sudo apt-get update
-sudo apt-get install -y clang lld ninja-build cmake python3 qemu-system-x86 ovmf grub-pc-bin grub-common xorriso mtools
+sudo apt-get install -y clang clang-format lld ninja-build cmake python3 python3-venv \
+  qemu-system-x86 qemu-system-arm ovmf ovmf-ia32 qemu-efi-aarch64 \
+  grub-pc-bin grub-common xorriso mtools gcc g++ pkg-config \
+  libglib2.0-dev libpixman-1-dev libfdt-dev
+python3 tools/prepare_phase1.py
+SOURCE_DATE_EPOCH=1704067200 python3 tests/phase1.py
 SOURCE_DATE_EPOCH=1704067200 python3 tests/phase0.py
 ```
 
-脚本配置并构建 host 和全部五个 target，然后从不同源码路径重建、逐字节比较产物，
-最后生成 GRUB2 rescue ISO 和临时 EFI FAT 盘运行 QEMU。检查失败返回非零；
-日志及 SHA-256 在 `build/phase0/`。测试 ISO、ESP 和 OVMF 变量盘是临时 fixture，不属于可复现 runtime 产物。
-`OVMF_CODE` / `OVMF_VARS` 可指定本地固件路径；测试使用未启用 Secure Boot 的 OVMF。
-`--no-qemu` 仅用于构建排查，不能作为完整 Phase 0 验收。
+`prepare_phase1.py` 校验固定 SHA-256，下载测试固件并在 `build/qemu-9.2.2/` 构建
+LoongArch QEMU **host 模拟器**。项目 runtime 始终只由 CMake 构建。
+Ubuntu 24.04 的 QEMU 8.2 不能加载本次选用的 16 MiB LoongArch 固件；
+脚本使用独立 QEMU 9.2.2，不替换系统 QEMU。首次运行需要网络和数分钟。
 
-单独构建：
+Phase 1 测试为全部 target 构建产物，从不同源码路径独立重建并比较二进制，
+再生成 ISO/ESP，在 QEMU 中检查串口成功标记及 reset 后退出。Linux 实模式路径另检查 debugcon。
+完整证据保留在 `build/phase1/*.log` 和 `results.json`。
+`--skip-build`、`--no-repro`、`--only bios` 等选项仅用于定向排查。
+`QEMU_LOONGARCH`、`LOONGARCH_EFI` 可指定已有模拟器与固件。
+
+单目标构建：
 
 ```sh
-cmake -S . -B build/host -G Ninja -DCMAKE_C_COMPILER=clang
-cmake --build build/host
-ctest --test-dir build/host --output-on-failure
 cmake -S . -B build/bios -G Ninja -DCMAKE_TOOLCHAIN_FILE=cmake/toolchains/i386-pc.cmake
 cmake --build build/bios
 cmake -S . -B build/efi -G Ninja -DCMAKE_TOOLCHAIN_FILE=cmake/toolchains/x86_64-efi.cmake
 cmake --build build/efi
 ```
 
-GCC/binutils 的兼容路径目前覆盖两个 x86 可启动产物：
+## 产物
+
+| 配置 | Phase 1 产物 | 验证入口 |
+| --- | --- | --- |
+| host | `boot-core-test` | 内存、context、EFI 描述符、分块访问及日志测试 |
+| i386-pc | `boot-core.elf` | GRUB2 Multiboot2 |
+| i386-pc | `boot-linux.bz` | GRUB2 Linux 32 位入口、SeaBIOS Linux 实模式 setup |
+| i386-efi | `boot-core.efi` | OVMF IA32，`BOOTIA32.EFI` |
+| x86_64-efi | `boot-core.efi` | OVMF X64，`BOOTX64.EFI` |
+| arm64-efi | `boot-core.efi` | AAVMF，`BOOTAA64.EFI` |
+| loongarch64-efi | `boot-core.efi` | EDK2 LoongArch，`BOOTLOONGARCH64.EFI` |
+
+保留 Phase 0 的 `boot-stage2.elf`、`boot-hello.efi`、`boot-efi-test.efi` 和架构静态库探针，
+以持续检查已有基线。它们不代表 Phase 1 的产品入口。
+所有 EFI 映像均由固件装载；LoongArch 使用构建期 ELF→PE 转换，仅接受相对重定位并生成 PE DIR64，
+runtime 没有自制 PE loader。
+
+## 内存接口与验证边界
+
+[平台/内存接口说明](docs/phase1.md) 包含调用约束、来源及验收证据。
+
+- BL 支持显式释放；Loader 支持 begin/abort/commit；Resident 不释放。
+- BIOS 使用 64 位物理地址、2 MiB PAE 窗口和低于 512 KiB 的 4 KiB bounce buffer。
+  QEMU 6 GiB、有 PAE 无 long mode 场景验证高地址分块搬运、数据哈希及 CR0/CR3/CR4、FP 状态恢复。
+- 跨 4 GiB 的**连续可用区域**由 host 夹具验证共享分块实现；普通 QEMU PC 在 4 GiB 下方存在
+  固件/PCI 保留区，跨越该区域的申请必须拒绝。没有把越过保留区的写入当作支持证据。
+- E820 Resident handler 使用低内存内自包含表，安装后冻结内存分配；测试通过真实 INT 15h 回读。
+- EFI 每次分配刷新内存图，通过固件 AllocatePages/FreePages 管理实际内存。
+  ARM64/LoongArch 的 Resident 使用 64 KiB 粒度，并回读固件图验证保留类型。
+- 本阶段未验证真实硬件、Secure Boot、GRUB4DOS 直接启动、INT 13h map 或 OS handoff。
+
+## 额外检查
 
 ```sh
-sudo apt-get install -y gcc gcc-mingw-w64-x86-64
+sudo apt-get install -y gcc-mingw-w64-x86-64
 python3 tests/gcc_smoke.py
+cmake -S . -B build/sanitizers -G Ninja -DCMAKE_C_COMPILER=clang \
+  -DCMAKE_BUILD_TYPE=Debug -DBOOT_SANITIZERS=ON
+cmake --build build/sanitizers
+ctest --test-dir build/sanitizers --output-on-failure
+python3 tools/check_references.py
+git diff --check
 ```
 
-对应 `i386-pc-gcc.cmake` 与 `x86_64-efi-gcc.cmake`；其他架构当前使用 Clang/LLD 基线，
-没有把未验证的 GCC 交叉组合报告成已支持。
-
-## 产物与限制
-
-| 配置 | 产物 | 当前用途 |
-| --- | --- | --- |
-| host | `boot-info` | host 构建与错误退出基线 |
-| i386-pc | `boot-stage2.elf` | GRUB2 Multiboot2 hello，COM1/debugcon |
-| x86_64-efi | `boot-hello.efi` | 原生 PE32+ EFI application，COM1/debugcon |
-| x86_64-efi | `boot-efi-test.efi` | 固件 LoadImage/StartImage 测试父映像 |
-| i386-efi / arm64-efi / loongarch64-efi | `libboot-runtime.a` | 架构编译探针，尚不能启动 |
-
-日志使用 x86 COM1 115200 8N1 与端口 0xE9，适用于本阶段 QEMU/PC 测试；
-EFI Serial I/O protocol、屏幕输出、其他架构日志和正式入口留在 Phase 1。
-BIOS 不支持无 SSE2 的 CPU，错误时在 debugcon 输出原因后 halt。
-EFI hello 有意返回测试父映像，以确认 StartImage 的返回值；正式 handoff 不允许返回菜单。
-
-所有 runtime 都不链接系统 libc。BIOS 由 `linker/i386-pc.ld` 布局，EFI 由原生 PE 链接器
-设置 subsystem、入口和 relocation；没有 ELF 转 PE 的隐式布局。
-源码/构建路径经 prefix-map 去除，编译拒绝日期宏，PE 时间戳固定为 0，不嵌入墙钟时间。
-`SOURCE_DATE_EPOCH` 被接受并记入测试记录，runtime 不需要嵌入该值。
-
-GRUB4DOS 的本地参考 loader 是 Multiboot1 路径，不能据此声称直接加载 Multiboot2。
-当前 BIOS 启动证据来自 GRUB2；Linux boot protocol 入口和兼容加载路径属于后续工作。
-参见 [progress.md](progress.md) 的验收结果与 [AGENTS.md](AGENTS.md) 的维护约定。
+GCC 兼容测试覆盖 x86 BIOS、Linux setup、X64 EFI 的 Phase 0/1 启动。
+host 核心测试可启用 ASan/UBSan。
+新代码使用 C11、UTF-8/LF、四空格；C 花括号采用 Allman 换行，规则保存在 `.clang-format`。

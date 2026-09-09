@@ -1,88 +1,85 @@
 # 实施进度
 
-更新：2026-09-08。Phase 0 基线已完成，BIOS 验收采用 GRUB2 的 Multiboot2 加载路径。
-Phase 1 尚未开始。GRUB4DOS 直接加载的限制见下文，不把它列为已验证能力。
+更新：2026-09-09。Phase 1 平台/内存切片已实现，全部平台入口有实际 QEMU 启动证据。
+连续跨 4 GiB RAM 的测试范围见下文；未将普通 PC 的保留区当作可写 RAM。
 
-## Phase 0 交付
+## Phase 1 交付
 
-- 沿用已有 Git repository；加入 GPL-3.0-or-later LICENSE、CODE_ORIGINS.md、
-  references.lock.json 及来源校验工具，采用可审计迁移历史路线，不复制整套参考 runtime。
-- 确定 `boot_` / `BOOT_` 命名空间、C11/独立汇编、目录布局和格式；生成 AGENTS.md。
-- CMake 分离 host 与 target；五个 Clang toolchain、两个 x86 GCC 兼容 toolchain；
-  BIOS linker script 和 EFI 原生 PE 链接参数；GitHub Actions 自动构建/启动/上传证据。
-- 新增明确返回值 `boot_status_t` 与有界 COM1/debugcon 日志；未知状态、空日志参数、
-  UART 不就绪时的超时与 debugcon 保留路径均有 host 测试。
-- i386 BIOS 最小 Multiboot2 header、GDT、栈和 eager FP 初始化；x64 EFI hello 与测试父映像。
-- 加入不同源码路径的独立双构建和 SHA-256 比较、PE 属性检查、动态 QEMU fixture。
+- 共用 `boot_context` 和 platform API：console、固件日期/时间、memory map、
+  固件信息、reset/halt；4 KiB memory log ring 和独立 panic。
+- BIOS Multiboot2、Linux 32 位入口和 Linux 实模式 setup 使用同一个 CMake runtime payload。
+  保留 command line、framebuffer、resource 和上级 module 元数据，并保留对应输入内存。
+- IA32、X64、ARM64、LoongArch64 EFI 均生成可启动 PE 映像，由固件加载。
+  LoongArch 汇编入口在 C 前启用 EUEN.FPE；各架构规范化 FP 控制状态。
+- BL 分配/释放、Loader begin/abort/commit、Resident 保留与冻结；
+  固件类型由 EFI AllocatePages/FreePages 实际落实，不仅修改本地记账表。
+- BIOS 64 位物理区域、独立 PAE/地址位宽检测、2 MiB 临时映射窗口、
+  低于 512 KiB 的 4 KiB bounce、重叠分块 copy 和输入范围校验。
+- CS 相对的 Resident INT 15h E820 handler，安装后冻结图；
+  通过真实模式 INT 15h 回读整个表，检查包括高地址 Resident 区域。
+- ARM64/LoongArch Resident 按 64 KiB 粒度保留；EFI 分配前刷新固件图，
+  对固件拒绝的特殊范围有界尝试较低地址。
+- C 花括号统一为 Allman 换行；更新 `.clang-format` 和 AGENTS.md。
+  `ref/`、来源锁没有改动，没有提交或推送。
 
-## 验收证据
+## Phase 1 验收证据
 
-| plan.md 验收项 | 结果与证据 |
+| 验收项 | 结果与边界 |
 | --- | --- |
-| host 和全部 target 可配置 | 通过；host、i386-pc、i386-efi、x86_64-efi、arm64-efi、loongarch64-efi 均实际编译 |
-| x64 EFI 经 OVMF LoadImage/StartImage | 通过；测试父映像先验证损坏 PE 被拒绝，再加载并启动 hello，串口记录两个成功标记 |
-| i386 Multiboot2 stage2 | 通过 GRUB2/SeaBIOS 路径；grub-file 识别 header，串口输出 hello |
-| 两次相同构建 hash 相同 | 通过；不同源码/构建绝对路径下全部八个产物逐字节相同，SOURCE_DATE_EPOCH=1704067200 |
+| 全部入口统一 context | GRUB2 MB2、GRUB2 Linux、SeaBIOS Linux setup、四种 EFI 实际启动；Linux 实模式另有 debugcon 标记 |
+| Loader 整体 abort/commit | host 和所有 runtime 通过；已提交对象不被后续事务 abort 释放 |
+| Resident E820 保留 | BIOS 实际 INT 15h 回读匹配；包含 4 GiB 以上 Resident 区域 |
+| QEMU 高地址访问 | 6 GiB RAM，qemu32,+pae,-lm；高地址跨 2 MiB 窗口及重叠 copy 的数据哈希、CR0/3/4、FP 状态一致 |
+| 跨 4 GiB 连续区域 | host aperture 使用同一 core 分块实现，从 0xfffff000 跨界读写，完整字节比较通过；普通 QEMU PC 在边界下方存在保留区，不能声称实测连续可用 RAM 跨界写入 |
+| 无 PAE、低内存不足、溢出 | 无 PAE QEMU 低地址回退通过；host/启动探针覆盖低地址不足和溢出拒绝 |
+| EFI BS/RT/Loader 类型 | 所有 EFI 平台识别三类，并通过 GetMemoryMap 回读确认 LoaderData/Resident ReservedMemoryType |
+| 独立 panic | 所有入口输出预期 panic 并 reset；QEMU 正常退出。无 Lua/LVGL/文件系统/模块依赖 |
+| 可复现 | 不同源码路径独立双构建，七个 Phase 1 产物逐字节相同 |
+| 兼容与诊断 | x86 GCC Phase 0/1 启动通过，host ASan/UBSan 通过，git diff --check 通过 |
 
-主验证命令（Ubuntu/WSL）：
+本次完整运行命令（Ubuntu/WSL）：
 
 ```sh
 python3 tools/check_references.py
+python3 tools/prepare_phase1.py
+SOURCE_DATE_EPOCH=1704067200 python3 tests/phase1.py
 SOURCE_DATE_EPOCH=1704067200 python3 tests/phase0.py
 python3 tests/gcc_smoke.py
+cmake -S . -B build/sanitizers -G Ninja -DCMAKE_C_COMPILER=clang -DCMAKE_BUILD_TYPE=Debug -DBOOT_SANITIZERS=ON
+cmake --build build/sanitizers
+ctest --test-dir build/sanitizers --output-on-failure
 git diff --check
 ```
 
-本次完整 Clang 运行的证据保留在 `build/phase0/`，GCC 兼容运行在 `build/gcc-smoke/`。
-可持久审查的 hash / 工具版本摘要见 `docs/phase0-evidence.json`。本地运行了与 CI 相同的脚本；
-没有声称已在远端 GitHub Actions 上运行。
+Phase 1 九个 QEMU 场景、命令、映像/固件 SHA-256 保存在 `build/phase1/results.json`，
+串口与模拟器日志在同目录；可持久审查的摘要见
+[docs/phase1-evidence.json](docs/phase1-evidence.json)。
+GCC 证据在 `build/gcc-smoke/`，sanitizer 结果在 `build/sanitizers.log`。
+CI 已加入同一验证流程；这里仅声明本地执行结果，没有远端 Actions 运行声明。
 
-串口关键结果：
+## 本阶段边界
 
-```text
-BOOT:PASS:fp-state
-BOOT:HELLO:i386-pc:multiboot2
-BOOT:PASS:invalid-pe-rejected
-BOOT:PASS:LoadImage
-BOOT:PASS:fp-state
-BOOT:HELLO:x86_64-efi
-BOOT:PASS:StartImage
-```
+- 普通 QEMU PC 的跨 4 GiB 保留区必须拒绝；连续跨界数据验证是 host 夹具，
+  真实高地址 RAM 访问则由 QEMU 证明。后续验收不得省略这个区别。
+- 超过 4 GiB 长度目前验证区域管理和事务记账；没有声称搬运了完整 4 GiB 文件。
+- Resident E820 安装后不再允许分配，后续应在最终 commit 使用；
+  跨 OS handoff 的 Resident PAE/INT 13h map、BMIT 和 initrd 最终地址协议仍在 Phase 7/9/11。
+- Linux setup_data 链明确拒绝；Linux 实模式 setup 的低内存/装载位置限制见 docs/phase1.md。
+- 尚未验证 GRUB4DOS 直接启动、真实硬件或 Secure Boot。
+- Phase 1 `boot-core` 是运行验收后 panic/reset 的纵向切片，没有菜单、模块、Lua 或 OS loader。
+- LoongArch 本次使用 QEMU 9.2.2 和固定 EDK2 固件；系统 QEMU 8.2 无法加载该 16 MiB 固件。
+- 最低层文本输出用于 ASCII 诊断；完整 UTF-8 UI 与字体在后续阶段实现。
 
-Clang 与 GCC 两种工具链的 BIOS/EFI 产物都通过 QEMU 启动。Clang 还通过 Pentium III、
-486、关闭 FXSR、关闭 SSE 四个拒绝场景，均在 debugcon 输出 `BOOT:FAIL:cpu-sse2-required`，
-没有进入 hello。486 测试只证明该 CPU 模型被拒绝，不声称覆盖真实无 CPUID 硬件的全部行为。
-最低层 FP 状态读取 x87 control word / MXCSR，并执行 double 运算验证。
+下一阶段为 Phase 2 ELF module ABI/SDK。完整调用约束及来源见
+[docs/phase1.md](docs/phase1.md) 和 [CODE_ORIGINS.md](CODE_ORIGINS.md)。
 
-## 浮点基线
+## Phase 0 保留基线
 
-用户提供的基线已加入 DESIGN.md §5.2：x64 SSE/SSE2、ARM64 FP/SIMD、LoongArch LP64D；
-i386 `-msse2 -mfpmath=sse`。不启用可选的 `-mno-80387`，保留标准 i386 浮点返回 ABI。
-BIOS 入口在 C 前检查 CPUID/FPU/FXSR/SSE/SSE2，设置 CR0/CR4、FNINIT/MXCSR；
-x64 EFI 入口与返回测试父映像前重置 FP 状态。整个实现没有 lazy FP。
-ARM64/LoongArch 的编译对象架构已检查，LoongArch ELF flags 为 0x43（double-float / OBJABI v1）。
-这些架构真正的 FP 状态初始化、ARM64 FPCR/FPSR 和 LoongArch FCSR handoff 规范化，
-必须随 Phase 1 / 后续 loader 实现；本阶段无这些平台的执行入口。
-
-## 已知边界与下一阶段
-
-- IA32/ARM64/LoongArch EFI 当前只有 runtime 静态库编译探针，不是 EFI 可启动映像，
-  没有实际 firmware 执行证据；Phase 0 的验收仅要求这些 target 可配置。
-- ref/grub4dos 的当前 loader 提供 Multiboot1 路径，未发现 Multiboot2 直接加载实现。
-  因此本阶段不声称 GRUB4DOS 直接启动成功，也不为此偷偷加入另一套 legacy 入口。
-  后续 Linux boot protocol stage2 可提供相应兼容路径。
-- Lua 版本已按用户决定统一为 5.5.1，与 ref/lua-5.5.1 来源锁一致；移植仍在 Phase 6。
-- hello 有意返回固件测试父映像；这不是最终产品的 handoff 策略。
-- 还没有 allocator、统一 boot_context、memory map、EFI protocol console、Lua、模块、存储、map、BMIT、
-  Linux protocol stage2、正式 loader 或安全启动闭环；这些按 plan.md 后续阶段实现。
-- 本阶段测试未启用 Secure Boot，不代表 Secure Boot 或实际硬件认证。
-
-下一步按 Phase 1 建立统一 boot_context、三类内存所有权、完整平台入口和 fatal/reset 路径。
-
-## 后续设计更新
-
-Lua 基线统一为 5.5.1。DESIGN.md §7.1 增加 BIOS map --mem / initrd 使用 4 GiB 以上物理内存的要求，
-并在 Phase 1、7、8、9 加入实现项与边界验收。已核对 GRUB4DOS 的 PAE/long-mode 搬运，
-ref/wimboot 的 initrd 高地址搬运与分页 callback，
-以及实际路径 `ref/syslinux-6.04-pre1/memdisk` 的驻留管理和 32 位地址限制。
-本次为文档一致性与设计更新，没有新增 runtime 高内存支持；Phase 0 测试结论不变。
+保留并回归了原 Phase 0 的六配置构建、不同源码路径双构建、GRUB2 Multiboot2 hello、
+X64 OVMF 测试父映像的损坏 PE 拒绝及 LoadImage/StartImage、四个 CPU 拒绝场景
+（Pentium III、486、关闭 FXSR、关闭 SSE）。
+原 Phase 0 IA32/ARM64/LoongArch 静态库仍仅为编译探针；
+本次新增的 `boot-core.efi` 才是这些平台的可启动产物。
+Phase 0 hello 返回固件仅是测试策略，不沿用到 Phase 1 或正式 loader。
+Phase 0 历史摘要见 [docs/phase0-evidence.json](docs/phase0-evidence.json)，
+最新回归结果在 `build/phase0/results.json`。

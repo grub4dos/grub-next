@@ -1,6 +1,6 @@
 /* SPDX-License-Identifier: GPL-3.0-or-later */
-#include <boot/log.h>
 #include <boot/fp.h>
+#include <boot/log.h>
 #if defined(_MSC_VER)
 /* MSVC ABI marker emitted for FP expressions; no CRT initializer is needed. */
 int _fltused = 0;
@@ -14,7 +14,8 @@ uintptr_t efi_main(void *image, void *system_table)
     (void)system_table;
     boot_fp_reset();
     boot_log_init();
-    if (boot_fp_check() != BOOT_OK) {
+    if (boot_fp_check() != BOOT_OK)
+    {
         boot_log_write("BOOT:FAIL:fp-state\r\n");
         return 1;
     }

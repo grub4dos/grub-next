@@ -16,7 +16,7 @@
 - `build/`：生成物与测试证据，不提交。
 
 CMake 是唯一构建描述；脚本只能编排 CMake、生成数据和测试，不能私自编译另一套 runtime。
-新代码用 C11、独立 `.S` 汇编、UTF-8、LF、四空格，遵守 `.clang-format`。
+新代码用 C11、独立 `.S` 汇编、UTF-8、LF、四空格，遵守 `.clang-format`；C 花括号采用 Allman 换行格式。
 保留既有版权；新代码加 SPDX `GPL-3.0-or-later`。迁移文件必须保留上游版权并更新 CODE_ORIGINS.md。
 不得改动 ref/ 来修复新工程构建；迁移前运行 `python3 tools/check_references.py`，
 记录源文件、提交和适配差异。不要静默更新来源锁。

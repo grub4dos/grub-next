@@ -60,4 +60,25 @@ LVGL 内嵌第三方组件等不因顶层许可而自动归入 MIT，正式迁�
   `setup.c` 明确将地址限制在低 4 GiB，不能将其视为高地址实现。
 - `ref/grub/include/grub/i386/linux.h`：Linux initrd 地址限制、扩展字段及能力标识。
 
-这些条目仅为设计依据；高内存 allocator、initrd loader 和驻留 map 实现分别属于 Phase 1、7、8、9。
+Phase 1 的高内存基础实现见下；initrd loader 和驻留 map 仍属于 Phase 7、8、9。
+
+## Phase 1 迁移与新实现（2026-09-09）
+
+迁移前已运行 `python3 tools/check_references.py`，全部内容摘要匹配；没有改动 ref/ 或来源锁。
+
+| 目的文件 | 来源文件和固定提交 | 版权与适配差异 |
+| --- | --- | --- |
+| platform/bios/physical.c | ref/wimboot/src/paging.c，e7fab3ca8caba24e05280b6e0869898267cac057 | 保留 Michael Brown 2021 版权，按 or-later 使用 GPLv3；适配 PAE 初始化和 CR0/3/4 切换。新加所有权/位宽检查、共享分块、分页关闭入口约束及低地址 bounce；没有沿用原地址永久重映射。 |
+| platform/bios/entry.S、core/context.c | ref/grub/include/multiboot2.h，2f972128c48b90bf8b63aadffe6d546976e1dee6 | 基于标准布局新写；沿用本项目 Phase 0 的整数 CPU gate 和 eager FP 初始化。 |
+| platform/bios/linux_setup.S、tools/linux_image.py、core/context.c | ref/grub/include/grub/i386/linux.h，同上 | 核对 Linux header/boot_params 偏移；新写 setup/E820/protected-mode adapter，使用同一 CMake payload。 |
+| include/boot/efi.h、core/efi_memory.c、platform/efi/ | ref/grub/include/grub/efi/api.h，同上 | 核对标准表布局、memory types 与 ABI，未复制完整 EFI runtime。 |
+| platform/bios/resident.S、resident.c | INT 15h E820 接口及 DESIGN.md §7.1 | 新写 CS 相对驻留 handler、冻结图及真实模式回读探针，未移植 GRUB4DOS map。 |
+| core/memory.c、console.c、physical.c；tools/loongarch_pe.py | 本项目新实现 | 所有权事务、日志、共享分块和严格限定的构建期 PE 转换；runtime PE 仍由固件加载。 |
+
+QEMU/EDK2 是 host 测试依赖，下载和构建仅在 build/ 内，不链接进产品。
+固定版本/摘要记录在 tools/prepare_phase1.py；ARM64/LoongArch Resident 粒度核对 EDK2
+MdePkg/Include/{AArch64,LoongArch64}/ProcessorBind.h 的 64 KiB 约束。
+LoongArch 的实际 EDK2 入口 EUEN.FPE=0 异常由新写汇编 eager FP 入口解决。
+
+验证见 tests/phase1.py、tests/gcc_smoke.py、docs/phase1.md 和 progress.md；
+不把上述基础实现视为 Phase 7/9 的 initrd 协议交接或 INT 13h map 已完成。
