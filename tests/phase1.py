@@ -12,6 +12,7 @@ import tempfile
 import time
 import phase0
 ROOT = phase0.ROOT
+OUTPUT = ROOT / "build/phase1"
 COMMON = ["BOOT:PASS:firmware-time", "BOOT:PASS:loader-abort-commit",
           "BOOT:PASS:memory-owners", "BOOT:PASS:memory-log", "BOOT:PANIC:phase1-reset"]
 def qemu(output, name, executable, args, markers, timeout=90):
@@ -75,7 +76,7 @@ def main():
     parser.add_argument("--only", choices=["bios", "efi", "i386-efi", "x86_64-efi", "arm64-efi", "loongarch64-efi"])
     parser.add_argument("--no-repro", action="store_true")
     args = parser.parse_args()
-    output = ROOT/"build/phase1"
+    output = OUTPUT
     output.mkdir(parents=True, exist_ok=True)
     (output/"results.json").unlink(missing_ok=True)
     report = {"qemu": {}, "sha256": {}, "source_date_epoch": os.environ.setdefault("SOURCE_DATE_EPOCH", "1704067200")}

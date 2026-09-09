@@ -82,3 +82,11 @@ LoongArch 的实际 EDK2 入口 EUEN.FPE=0 异常由新写汇编 eager FP 入口
 
 验证见 tests/phase1.py、tests/gcc_smoke.py、docs/phase1.md 和 progress.md；
 不把上述基础实现视为 Phase 7/9 的 initrd 协议交接或 INT 13h map 已完成。
+
+## Phase 2 模块 ABI/SDK（2026-09-10）
+
+`core/module.c`、`include/boot/module.h`、`platform/module.c`、`sdk/`、模块测试和嵌入工具
+均为本项目新写，使用 SPDX GPL-3.0-or-later；没有从 ref/ 迁移代码。
+沿用 `core/elf.c` 的标准 ELF 受限 profile，新增项目自有 BOOTMOD note 和 C ABI。
+迁移检查命令 `python3 tools/check_references.py` 已通过；ref/ 与来源锁保持不变。
+实际调用和跨架构边界见 `docs/phase2.md`、`tests/phase2.py` 和 `progress.md`。

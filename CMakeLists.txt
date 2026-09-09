@@ -26,6 +26,7 @@ if(BOOT_TARGET STREQUAL "host")
     set_tests_properties(host-invalid PROPERTIES WILL_FAIL TRUE)
     include(cmake/phase1.cmake)
     include(cmake/elf-tests.cmake)
+    include(cmake/modules.cmake)
     return()
 endif()
 add_compile_options(-ffreestanding -fno-stack-protector -fno-builtin
@@ -65,3 +66,4 @@ else()
 endif()
 
 include(cmake/phase1.cmake)
+include(cmake/modules.cmake)

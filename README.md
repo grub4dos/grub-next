@@ -71,6 +71,13 @@ runtime 没有自制 PE loader。
   ARM64/LoongArch 的 Resident 使用 64 KiB 粒度，并回读固件图验证保留类型。
 - 本阶段未验证真实硬件、Secure Boot、GRUB4DOS 直接启动、INT 13h map 或 OS handoff。
 
+## Phase 2 模块 SDK
+
+模块 API、metadata 格式、树外构建命令和生命周期约束见 [Phase 2 SDK](docs/phase2.md)。
+运行 `SOURCE_DATE_EPOCH=1704067200 python3 tests/phase2.py` 可验证五个 target 的实际模块
+执行、失败回滚、重复加载拒绝及 SDK 独立构建。日志保存在 `build/phase2/`。
+当前样本为编译期嵌入；resource archive 与签名认证分别留在后续阶段。
+
 ## 额外检查
 
 ```sh

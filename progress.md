@@ -1,6 +1,7 @@
 # 实施进度
 
-更新：2026-09-09。Phase 1 平台/内存切片已实现，全部平台入口有实际 QEMU 启动证据。
+更新：2026-09-10。Phase 2 模块 ABI/SDK 已实现；Phase 1 平台/内存切片持续回归，
+全部平台入口和新增模块执行均有实际 QEMU 启动证据。
 连续跨 4 GiB RAM 的测试范围见下文；未将普通 PC 的保留区当作可写 RAM。
 
 2026-09-09 修复 GitHub Actions 的 Phase 1 准备步骤：QEMU 9.2.2 源码归档包含一个指向
@@ -115,8 +116,56 @@ Phase 0 全套回归、Phase 1 九个 QEMU 场景与独立源码路径双构建�
 QEMU 仅回归原有启动路径，没有在固件中调用新 ELF 入口；跨架构 fixture 装载也不等于
 跨架构执行。没有声称 SDK 样本已在所有固件 target 运行。
 
-后续 Phase 2 仍需 ELF note/UUID/ABI/capability 校验、boot_api、注册事务、重复加载状态、
-正式模块调用的平台适配和 external SDK。本次不改 ref/、来源锁，不提交或推送。
+上述 2026-09-09 交付当时尚缺 ELF note/UUID/ABI/capability 校验、boot_api、注册事务、
+重复加载状态、正式模块调用的平台适配和 external SDK；现已在下面的 2026-09-10 交付补齐。
+
+## Phase 2 完成交付（2026-09-10）
+
+- `core/module.c`：严格 PT_NOTE 遍历和 BOOTMOD metadata；校验 UUID、target、ABI range、
+  capabilities、名称/版本与未签名格式。唯一入口返回 descriptor，校验后通过 boot_api 调用 init。
+- `include/boot/module.h`：版本、struct_size、capability 协商，日志与服务注册回调。
+  X64 显式 SysV ABI，解决 EFI Microsoft ABI 与 ELF 模块的双向调用。
+- 注册事务只在 init 成功后公开服务；失败清空本次注册，已提交服务不受影响。
+  LOADING/ACTIVE/FAILED 单调状态、按 UUID 拒绝重复加载、递归拒绝及 MENU 前 freeze；无依赖、无 unload。
+- `platform/module.c`：BIOS 低地址 BL 映像存储、EFI AllocatePages(EfiLoaderCode)，
+  ARM64 D/I-cache 同步和 LoongArch dbar/ibar；已加载或初始化失败的映像保留到 handoff。
+- 安装式 `sdk/`：仅公开头文件、CMake helper 与两个样本，无 core library/imports。
+  成功样本检查数据、BSS、RELATIVE 重定位和浮点计算；失败样本注册后主动返回 BOOT_E_IO。
+- `tests/phase2.py` 继承 Phase 1 全部启动场景，另要求模块执行标记；SDK 复制到源码树外 `/tmp`
+  后重新构建，并核对与实际嵌入样本逐字节相同。构建仍全部由 CMake 描述。
+
+验收结果：
+
+| 项目 | 证据与边界 |
+| --- | --- |
+| 五个 target 加载/执行 | 九个 QEMU 场景通过；BIOS MB2、Linux protected/setup 和四种 EFI 均执行模块服务返回 42 |
+| 树外 SDK | 五种 target × 两个样本，独立构建逐字节相同；readelf 确认动态未定义 imports 为零 |
+| 失败原子性 | host 和全部固件路径检查 rolled-back 服务消失，既有 answer 服务仍可调用 |
+| 重复/冻结/递归 | ACTIVE/FAILED UUID 再加载拒绝；freeze 后拒绝加载/注册；host 检查 init 中递归及事务未提交不可见 |
+| 非法输入/ABI | 六项 host CTest 通过 ASan/UBSan；metadata/header、ABI range、descriptor ABI、API struct_size、能力、截断与 10,000 次 note 变异；沿用 ELF 非法 relocation/imports 测试 |
+| 可复现 | 不同源码路径独立构建的七个 runtime/host 产物相同，另比较十个树外 SDK 模块 |
+| 回归 | Phase 0 全套、Phase 1 全部场景（Phase 2 套件复用）、四架构 ELF fixture 与 GCC x86 启动通过 |
+
+Ubuntu/WSL 实际命令：
+
+```sh
+python3 tools/check_references.py
+SOURCE_DATE_EPOCH=1704067200 python3 tests/phase2.py
+python3 tests/elf.py
+SOURCE_DATE_EPOCH=1704067200 python3 tests/phase0.py
+python3 tests/gcc_smoke.py
+git diff --check
+```
+
+原始串口、QEMU 命令、固件和映像摘要在 `build/phase2/`；独立 SDK 校验与 SHA-256 在
+`build/phase2/results.json`。完整运行输出在 `build/phase2-full.log`，回归输出分别为
+`build/phase2-{elf,phase0,gcc}.log`；sanitizer/CTest 命令日志在 `build/elf/commands.log`。
+可持久审查摘要见 [docs/phase2-evidence.json](docs/phase2-evidence.json)，
+SDK/API 与调用约束见 [docs/phase2.md](docs/phase2.md)。CI 已接入同一测试，未声明远端 Actions 已执行。
+
+边界：当前模块为受信任 native code，hash/signature metadata 只接受明确的未签名格式，
+不声称密码学认证或逐段 W^X。验收资源为编译期嵌入，CPIO/manifest 属于 Phase 3；
+真实硬件、Secure Boot、Lua、菜单和 OS handoff 尚未实现/验证。未改 ref/、来源锁，未提交或推送。
 
 ## Phase 0 保留基线
 

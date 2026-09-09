@@ -4,6 +4,8 @@
 #include <boot/physical.h>
 extern void boot_bios_platform(struct boot_context *);
 extern void boot_core_test(struct boot_context *);
+struct boot_efi_services;
+extern void boot_module_probe(struct boot_context *, struct boot_efi_services *);
 extern boot_status_t boot_bios_resident_install(struct boot_context *);
 extern const char boot_image_start[], boot_image_end[];
 static struct boot_context context;
@@ -125,6 +127,7 @@ void boot_platform_main(uint32_t magic, uint32_t info)
         boot_panic(c, "low-bounce-memory", 0);
     boot_core_test(c);
     physical_test(c);
+    boot_module_probe(c, NULL);
     if (boot_bios_resident_install(c))
         boot_panic(c, "resident-e820", 0);
     boot_console(c, "BOOT:PASS:resident-int15-e820\r\n");

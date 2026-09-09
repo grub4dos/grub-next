@@ -234,7 +234,7 @@ NOT_LOADED -> LOADING -> ACTIVE
 
 ### 9.1 ABI
 
-模块入口接收单一 API table：
+模块入口返回版本化 descriptor，其 init 接收单一 API table：
 
 ```c
 const struct boot_module_v1 *boot_module_entry(void);

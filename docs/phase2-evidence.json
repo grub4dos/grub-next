@@ -1,0 +1,442 @@
+{
+  "date": "2026-09-10",
+  "firmware_sha256": {
+    "arm64-efi": "4a4cb7f6d8106bb2a7dd8c763fab14b1810152136fc4304e5b728f0043e84f12",
+    "i386-efi": "8aa6cf073ae217db099d7132beb2d18a4e3446a6a1d2917ce5b4f10424bd6a4d",
+    "loongarch64-efi": "edd5a67fe50f7597faecb2fe67c5733b9a31b0b345a2127c3c358a5737446ef7",
+    "x86_64-efi": "949bfa5389c4c48582737481e7d24f46b3a16b276ef44c4089a56858c6a0a446"
+  },
+  "host_validation": {
+    "ctest_passed": 6,
+    "metadata_mutations": 10000,
+    "sanitizers": [
+      "ASan",
+      "UBSan"
+    ],
+    "suite": "build/elf/commands.log"
+  },
+  "limitations": [
+    "QEMU, not physical hardware or Secure Boot",
+    "Unsigned native modules; no authentication or per-segment W^X",
+    "Embedded acceptance fixtures, not Phase 3 CPIO",
+    "No OS handoff"
+  ],
+  "phase": 2,
+  "qemu": {
+    "arm64-efi": {
+      "command": [
+        "qemu-system-aarch64",
+        "-accel",
+        "tcg",
+        "-display",
+        "none",
+        "-monitor",
+        "none",
+        "-no-reboot",
+        "-serial",
+        "file:/home/alive/grub-next/build/phase2/arm64-efi.serial.log",
+        "-M",
+        "virt",
+        "-cpu",
+        "cortex-a57",
+        "-m",
+        "512M",
+        "-drive",
+        "if=pflash,format=raw,readonly=on,file=/usr/share/AAVMF/AAVMF_CODE.fd",
+        "-drive",
+        "if=pflash,format=raw,file=/home/alive/grub-next/build/phase2/arm64-efi-vars.fd",
+        "-drive",
+        "if=none,id=esp,format=raw,file=fat:rw:/home/alive/grub-next/build/phase2/esp-arm64-efi",
+        "-device",
+        "virtio-blk-pci,drive=esp"
+      ],
+      "exit_code": 0,
+      "markers": [
+        "BOOT:PASS:firmware-time",
+        "BOOT:PASS:loader-abort-commit",
+        "BOOT:PASS:memory-owners",
+        "BOOT:PASS:memory-log",
+        "BOOT:PANIC:phase1-reset",
+        "BOOT:PASS:module-sdk-execution",
+        "BOOT:PASS:module-duplicate-rollback-freeze",
+        "BOOT:PASS:module-api-call",
+        "BOOT:PASS:efi-context:arm64-efi",
+        "BOOT:PASS:fp-state",
+        "BOOT:PASS:efi-bs-rt-loader-types",
+        "BOOT:PASS:efi-firmware-reservations"
+      ]
+    },
+    "bios-linux": {
+      "command": [
+        "qemu-system-x86_64",
+        "-accel",
+        "tcg",
+        "-display",
+        "none",
+        "-monitor",
+        "none",
+        "-no-reboot",
+        "-serial",
+        "file:/home/alive/grub-next/build/phase2/bios-linux.serial.log",
+        "-m",
+        "6G",
+        "-cpu",
+        "qemu32,+pae,-lm",
+        "-cdrom",
+        "/home/alive/grub-next/build/phase2/linux.iso",
+        "-boot",
+        "d",
+        "-debugcon",
+        "file:/home/alive/grub-next/build/phase2/bios-linux.debug.log"
+      ],
+      "exit_code": 0,
+      "markers": [
+        "BOOT:PASS:firmware-time",
+        "BOOT:PASS:loader-abort-commit",
+        "BOOT:PASS:memory-owners",
+        "BOOT:PASS:memory-log",
+        "BOOT:PANIC:phase1-reset",
+        "BOOT:PASS:module-sdk-execution",
+        "BOOT:PASS:module-duplicate-rollback-freeze",
+        "BOOT:PASS:module-api-call",
+        "BOOT:PASS:context:linux",
+        "BOOT:PASS:high-pae-copy-hash-fp",
+        "BOOT:PASS:resident-int15-e820"
+      ]
+    },
+    "bios-linux-real": {
+      "command": [
+        "qemu-system-x86_64",
+        "-accel",
+        "tcg",
+        "-display",
+        "none",
+        "-monitor",
+        "none",
+        "-no-reboot",
+        "-serial",
+        "file:/home/alive/grub-next/build/phase2/bios-linux-real.serial.log",
+        "-m",
+        "6G",
+        "-cpu",
+        "qemu32,+pae,-lm",
+        "-kernel",
+        "/home/alive/grub-next/build/phase2/i386-pc/boot-linux.bz",
+        "-debugcon",
+        "file:/home/alive/grub-next/build/phase2/bios-linux-real.debug.log"
+      ],
+      "exit_code": 0,
+      "markers": [
+        "BOOT:PASS:firmware-time",
+        "BOOT:PASS:loader-abort-commit",
+        "BOOT:PASS:memory-owners",
+        "BOOT:PASS:memory-log",
+        "BOOT:PANIC:phase1-reset",
+        "BOOT:PASS:module-sdk-execution",
+        "BOOT:PASS:module-duplicate-rollback-freeze",
+        "BOOT:PASS:module-api-call",
+        "BOOT:PASS:context:linux",
+        "BOOT:PASS:high-pae-copy-hash-fp",
+        "BOOT:PASS:resident-int15-e820"
+      ]
+    },
+    "bios-low-ram": {
+      "command": [
+        "qemu-system-x86_64",
+        "-accel",
+        "tcg",
+        "-display",
+        "none",
+        "-monitor",
+        "none",
+        "-no-reboot",
+        "-serial",
+        "file:/home/alive/grub-next/build/phase2/bios-low-ram.serial.log",
+        "-m",
+        "128M",
+        "-cpu",
+        "qemu32",
+        "-cdrom",
+        "/home/alive/grub-next/build/phase2/mb.iso",
+        "-boot",
+        "d",
+        "-debugcon",
+        "file:/home/alive/grub-next/build/phase2/bios-low-ram.debug.log"
+      ],
+      "exit_code": 0,
+      "markers": [
+        "BOOT:PASS:firmware-time",
+        "BOOT:PASS:loader-abort-commit",
+        "BOOT:PASS:memory-owners",
+        "BOOT:PASS:memory-log",
+        "BOOT:PANIC:phase1-reset",
+        "BOOT:PASS:module-sdk-execution",
+        "BOOT:PASS:module-duplicate-rollback-freeze",
+        "BOOT:PASS:module-api-call",
+        "BOOT:PASS:context:multiboot2",
+        "BOOT:PASS:no-high-ram",
+        "BOOT:PASS:resident-int15-e820"
+      ]
+    },
+    "bios-no-pae": {
+      "command": [
+        "qemu-system-x86_64",
+        "-accel",
+        "tcg",
+        "-display",
+        "none",
+        "-monitor",
+        "none",
+        "-no-reboot",
+        "-serial",
+        "file:/home/alive/grub-next/build/phase2/bios-no-pae.serial.log",
+        "-m",
+        "512M",
+        "-cpu",
+        "qemu32,-pae,-lm",
+        "-cdrom",
+        "/home/alive/grub-next/build/phase2/mb.iso",
+        "-boot",
+        "d",
+        "-debugcon",
+        "file:/home/alive/grub-next/build/phase2/bios-no-pae.debug.log"
+      ],
+      "exit_code": 0,
+      "markers": [
+        "BOOT:PASS:firmware-time",
+        "BOOT:PASS:loader-abort-commit",
+        "BOOT:PASS:memory-owners",
+        "BOOT:PASS:memory-log",
+        "BOOT:PANIC:phase1-reset",
+        "BOOT:PASS:module-sdk-execution",
+        "BOOT:PASS:module-duplicate-rollback-freeze",
+        "BOOT:PASS:module-api-call",
+        "BOOT:PASS:context:multiboot2",
+        "BOOT:PASS:low-copy-hash-fp",
+        "BOOT:PASS:resident-int15-e820"
+      ]
+    },
+    "bios-pae-no-lm": {
+      "command": [
+        "qemu-system-x86_64",
+        "-accel",
+        "tcg",
+        "-display",
+        "none",
+        "-monitor",
+        "none",
+        "-no-reboot",
+        "-serial",
+        "file:/home/alive/grub-next/build/phase2/bios-pae-no-lm.serial.log",
+        "-m",
+        "6G",
+        "-cpu",
+        "qemu32,+pae,-lm",
+        "-cdrom",
+        "/home/alive/grub-next/build/phase2/mb.iso",
+        "-boot",
+        "d",
+        "-debugcon",
+        "file:/home/alive/grub-next/build/phase2/bios-pae-no-lm.debug.log"
+      ],
+      "exit_code": 0,
+      "markers": [
+        "BOOT:PASS:firmware-time",
+        "BOOT:PASS:loader-abort-commit",
+        "BOOT:PASS:memory-owners",
+        "BOOT:PASS:memory-log",
+        "BOOT:PANIC:phase1-reset",
+        "BOOT:PASS:module-sdk-execution",
+        "BOOT:PASS:module-duplicate-rollback-freeze",
+        "BOOT:PASS:module-api-call",
+        "BOOT:PASS:context:multiboot2",
+        "BOOT:PASS:high-pae-copy-hash-fp",
+        "BOOT:PASS:resident-int15-e820"
+      ]
+    },
+    "i386-efi": {
+      "command": [
+        "qemu-system-x86_64",
+        "-accel",
+        "tcg",
+        "-display",
+        "none",
+        "-monitor",
+        "none",
+        "-no-reboot",
+        "-serial",
+        "file:/home/alive/grub-next/build/phase2/i386-efi.serial.log",
+        "-m",
+        "256M",
+        "-drive",
+        "if=pflash,format=raw,readonly=on,file=/usr/share/OVMF/OVMF32_CODE_4M.fd",
+        "-drive",
+        "if=pflash,format=raw,file=/home/alive/grub-next/build/phase2/i386-efi-vars.fd",
+        "-drive",
+        "if=none,id=esp,format=raw,file=fat:rw:/home/alive/grub-next/build/phase2/esp-i386-efi",
+        "-device",
+        "virtio-blk-pci,drive=esp",
+        "-debugcon",
+        "file:/home/alive/grub-next/build/phase2/i386-efi.debug.log"
+      ],
+      "exit_code": 0,
+      "markers": [
+        "BOOT:PASS:firmware-time",
+        "BOOT:PASS:loader-abort-commit",
+        "BOOT:PASS:memory-owners",
+        "BOOT:PASS:memory-log",
+        "BOOT:PANIC:phase1-reset",
+        "BOOT:PASS:module-sdk-execution",
+        "BOOT:PASS:module-duplicate-rollback-freeze",
+        "BOOT:PASS:module-api-call",
+        "BOOT:PASS:efi-context:i386-efi",
+        "BOOT:PASS:fp-state",
+        "BOOT:PASS:efi-bs-rt-loader-types",
+        "BOOT:PASS:efi-firmware-reservations"
+      ]
+    },
+    "loongarch64-efi": {
+      "command": [
+        "/home/alive/grub-next/build/qemu-9.2.2/build/qemu-system-loongarch64",
+        "-accel",
+        "tcg",
+        "-display",
+        "none",
+        "-monitor",
+        "none",
+        "-no-reboot",
+        "-serial",
+        "file:/home/alive/grub-next/build/phase2/loongarch64-efi.serial.log",
+        "-M",
+        "virt",
+        "-m",
+        "2G",
+        "-bios",
+        "/home/alive/grub-next/build/firmware/loongarch.fd",
+        "-drive",
+        "if=none,id=esp,format=raw,file=fat:rw:/home/alive/grub-next/build/phase2/esp-loongarch64-efi",
+        "-device",
+        "virtio-blk-pci,drive=esp"
+      ],
+      "exit_code": 0,
+      "markers": [
+        "BOOT:PASS:firmware-time",
+        "BOOT:PASS:loader-abort-commit",
+        "BOOT:PASS:memory-owners",
+        "BOOT:PASS:memory-log",
+        "BOOT:PANIC:phase1-reset",
+        "BOOT:PASS:module-sdk-execution",
+        "BOOT:PASS:module-duplicate-rollback-freeze",
+        "BOOT:PASS:module-api-call",
+        "BOOT:PASS:efi-context:loongarch64-efi",
+        "BOOT:PASS:fp-state",
+        "BOOT:PASS:efi-bs-rt-loader-types",
+        "BOOT:PASS:efi-firmware-reservations"
+      ]
+    },
+    "x86_64-efi": {
+      "command": [
+        "qemu-system-x86_64",
+        "-accel",
+        "tcg",
+        "-display",
+        "none",
+        "-monitor",
+        "none",
+        "-no-reboot",
+        "-serial",
+        "file:/home/alive/grub-next/build/phase2/x86_64-efi.serial.log",
+        "-m",
+        "256M",
+        "-drive",
+        "if=pflash,format=raw,readonly=on,file=/usr/share/OVMF/OVMF_CODE_4M.fd",
+        "-drive",
+        "if=pflash,format=raw,file=/home/alive/grub-next/build/phase2/x86_64-efi-vars.fd",
+        "-drive",
+        "if=none,id=esp,format=raw,file=fat:rw:/home/alive/grub-next/build/phase2/esp-x86_64-efi",
+        "-device",
+        "virtio-blk-pci,drive=esp",
+        "-debugcon",
+        "file:/home/alive/grub-next/build/phase2/x86_64-efi.debug.log"
+      ],
+      "exit_code": 0,
+      "markers": [
+        "BOOT:PASS:firmware-time",
+        "BOOT:PASS:loader-abort-commit",
+        "BOOT:PASS:memory-owners",
+        "BOOT:PASS:memory-log",
+        "BOOT:PANIC:phase1-reset",
+        "BOOT:PASS:module-sdk-execution",
+        "BOOT:PASS:module-duplicate-rollback-freeze",
+        "BOOT:PASS:module-api-call",
+        "BOOT:PASS:efi-context:x86_64-efi",
+        "BOOT:PASS:fp-state",
+        "BOOT:PASS:efi-bs-rt-loader-types",
+        "BOOT:PASS:efi-firmware-reservations"
+      ]
+    }
+  },
+  "reproducible": true,
+  "sdk": {
+    "arm64-efi/failing": {
+      "external_build_identical": true,
+      "sha256": "cfbc039a0d16598c8810fc51854ad018cc1bbc423791036f32a85ddcc2cf363b",
+      "undefined_imports": 0
+    },
+    "arm64-efi/sample": {
+      "external_build_identical": true,
+      "sha256": "68e0a89c8c9a7313759c5efa05ff98a149be726a4e07462b4706a0f177b8fd0c",
+      "undefined_imports": 0
+    },
+    "i386-efi/failing": {
+      "external_build_identical": true,
+      "sha256": "d66e883560a34160225523888ca2628992f4a75c36e5c5409a913e972df5974e",
+      "undefined_imports": 0
+    },
+    "i386-efi/sample": {
+      "external_build_identical": true,
+      "sha256": "20fefc8fbcb15160dd083f08801b276d7516c06d8bd9c7da1ccd8b1c8498a183",
+      "undefined_imports": 0
+    },
+    "i386-pc/failing": {
+      "external_build_identical": true,
+      "sha256": "ed582bed79f9c12a4bf1d6cc5e8ef5e54930bfea110285c1f74db1d2ee76cb99",
+      "undefined_imports": 0
+    },
+    "i386-pc/sample": {
+      "external_build_identical": true,
+      "sha256": "bf6a3dab1eebec9651c39e85cc28bcc181a152b9c1050c71b07dd1910fc26c05",
+      "undefined_imports": 0
+    },
+    "loongarch64-efi/failing": {
+      "external_build_identical": true,
+      "sha256": "96ae7f6bf41d8cbdad0efde74679f9ad8c5394890b947b8e60bdd28bc831ded3",
+      "undefined_imports": 0
+    },
+    "loongarch64-efi/sample": {
+      "external_build_identical": true,
+      "sha256": "102a62dc6b20c11cb49945d588b27b7c45525358272f599a6bb3f3d067f5f1dd",
+      "undefined_imports": 0
+    },
+    "x86_64-efi/failing": {
+      "external_build_identical": true,
+      "sha256": "9744f3875e5a77ee50ddacf292075edf76695190e92cd6ecaa619bf89fc203a2",
+      "undefined_imports": 0
+    },
+    "x86_64-efi/sample": {
+      "external_build_identical": true,
+      "sha256": "824142ffe4c8a9cc61f95de4ff491746722ce04a307daa3ffb74030c2cf06551",
+      "undefined_imports": 0
+    }
+  },
+  "sha256": {
+    "arm64-efi/boot-core.efi": "82df441d02043355ca94f2b3c8e44aa0300d48f58d4292432bb43229a513d667",
+    "host/boot-core-test": "ea613565f917ac91a566d66e9f47272c94d90e019db7f8e6ddac25764a799bf3",
+    "i386-efi/boot-core.efi": "2ca202fa684e44fb93643c54472c1c28079a58eb45c4468ca9e1fd821b8405d7",
+    "i386-pc/boot-core.elf": "2c944c7ed72bee2be50504978569af7c92131b4514d12488932ac8482ac9dfc2",
+    "i386-pc/boot-linux.bz": "8698c6f5ffa580a440dcc9900ecd71624d6da32714d10a6f3b1978a86c99ad72",
+    "loongarch64-efi/boot-core.efi": "7ee370dcd05b6656a8ead8eecc0993c37b9463afbb0fabe282ed719e222531ad",
+    "x86_64-efi/boot-core.efi": "e0c5c592e4560bf47f204077092f63c1f23d54dfbfbfcfae2a3aec670e53c647"
+  },
+  "source_date_epoch": "1704067200"
+}

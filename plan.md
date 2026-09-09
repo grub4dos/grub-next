@@ -58,6 +58,9 @@
 
 ## 4. Phase 2: ELF module ABI and SDK
 
+状态：2026-09-10 已完成。五个 target 的树外 SDK 模块均有实际启动执行、事务回滚和重复加载
+拒绝证据；接口与格式见 `docs/phase2.md`，复现使用 `python3 tests/phase2.py`。
+
 ### Work
 
 - 已完成 ELF ET_DYN 映像 loader（2026-09-09）；接口、受限 profile 和验证边界见 `docs/elf-loader.md`。
