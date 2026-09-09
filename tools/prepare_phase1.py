@@ -5,6 +5,8 @@ import hashlib
 from pathlib import Path
 import subprocess
 import tarfile
+import tempfile
+import uuid
 import urllib.request
 ROOT = Path(__file__).resolve().parents[1]
 BUILD = ROOT/"build"
@@ -15,6 +17,34 @@ def fetch(url, path, digest):
             path.write_bytes(response.read())
     if hashlib.sha256(path.read_bytes()).hexdigest() != digest:
         raise RuntimeError(f"hash mismatch: {path}; remove the failed download and retry")
+def qemu_source_filter(member, destination):
+    # Unused by our softmmu build. Keep data_filter for every other member.
+    if (member.name == "qemu-9.2.2/roms/edk2/EmulatorPkg/Unix/Host/X11IncludeHack"
+            and member.issym() and member.linkname == "/opt/X11/include"):
+        return None
+    return tarfile.data_filter(member, destination)
+
+def extract_source(archive, source):
+    digest = hashlib.sha256(archive.read_bytes()).hexdigest()
+    marker = source/".boot-source-complete"
+    if marker.is_file() and marker.read_text() == digest:
+        return
+    # Publish only a fully extracted tree. An interrupted/older tree is retained
+    # for inspection, never used as proof that extraction completed.
+    with tempfile.TemporaryDirectory(prefix="qemu-extract-", dir=source.parent) as temporary:
+        staging = Path(temporary)
+        with tarfile.open(archive) as tar:
+            tar.extractall(staging, filter=qemu_source_filter)
+        extracted = staging/source.name
+        if not (extracted/"configure").is_file():
+            raise RuntimeError("QEMU archive has no configure script")
+        (extracted/marker.name).write_text(digest)
+        if source.exists():
+            backup = source.with_name(source.name+".previous-"+uuid.uuid4().hex)
+            source.rename(backup)
+            print(f"Retained previous source: {backup}")
+        extracted.rename(source)
+
 def main():
     firmware = BUILD/"firmware/loongarch.fd.bz2"
     fetch("https://raw.githubusercontent.com/qemu/qemu/v9.2.2/pc-bios/edk2-loongarch64-code.fd.bz2",
@@ -26,9 +56,7 @@ def main():
     source = BUILD/"qemu-9.2.2"
     emulator = source/"build/qemu-system-loongarch64"
     if not emulator.exists():
-        if not source.exists():
-            with tarfile.open(archive) as tar:
-                tar.extractall(BUILD, filter="data")
+        extract_source(archive, source)
         with (BUILD/"qemu-configure.log").open("w") as log:
             subprocess.run(["./configure", "--target-list=loongarch64-softmmu",
                 "--disable-docs", "--disable-werror", "--disable-gtk", "--disable-sdl",

@@ -3,6 +3,12 @@
 更新：2026-09-09。Phase 1 平台/内存切片已实现，全部平台入口有实际 QEMU 启动证据。
 连续跨 4 GiB RAM 的测试范围见下文；未将普通 PC 的保留区当作可写 RAM。
 
+2026-09-09 修复 GitHub Actions 的 Phase 1 准备步骤：QEMU 9.2.2 源码归档包含一个指向
+`/opt/X11/include` 的无关绝对符号链接，Python 3.12 的 `tarfile.data_filter` 会拒绝它。
+`tools/prepare_phase1.py` 现在只跳过该固定、未使用的成员，其他条目继续执行安全过滤；源码先在
+临时目录完整解包、校验 `configure` 和归档 SHA-256 后再发布，并用 `.boot-source-complete`
+标记避免复用不完整解包。全新临时目录解包测试已通过。
+
 ## Phase 1 交付
 
 - 共用 `boot_context` 和 platform API：console、固件日期/时间、memory map、
