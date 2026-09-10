@@ -9,6 +9,7 @@ SECTIONS {
     .multiboot2 : { KEEP(*(.multiboot2)) } :text
     .text : { *(.text.start) *(.text*) } :text
     .rodata : { *(.rodata*) } :text
+    .bootres : { KEEP(*(.bootres)) } :text
     . = ALIGN(4096);
     .data : { *(.data*) } :data
     .bss : { *(.bss*) *(COMMON) } :data

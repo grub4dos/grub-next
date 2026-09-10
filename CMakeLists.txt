@@ -27,6 +27,7 @@ if(BOOT_TARGET STREQUAL "host")
     include(cmake/phase1.cmake)
     include(cmake/elf-tests.cmake)
     include(cmake/modules.cmake)
+    include(cmake/resources.cmake)
     return()
 endif()
 add_compile_options(-ffreestanding -fno-stack-protector -fno-builtin
@@ -67,3 +68,4 @@ endif()
 
 include(cmake/phase1.cmake)
 include(cmake/modules.cmake)
+include(cmake/resources.cmake)

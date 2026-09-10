@@ -81,6 +81,9 @@
 
 ## 5. Phase 3: Resource archive
 
+状态：2026-09-10 已完成。三种资源输入、五个 target 的 archive 模块执行、损坏拒绝和
+独立路径可复现性见 `docs/phase3.md`；复现使用 `python3 tests/phase3.py`。
+
 ### Work
 
 - 实现只读 `cpio newc` reader。

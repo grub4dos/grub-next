@@ -90,3 +90,17 @@ LoongArch 的实际 EDK2 入口 EUEN.FPE=0 异常由新写汇编 eager FP 入口
 沿用 `core/elf.c` 的标准 ELF 受限 profile，新增项目自有 BOOTMOD note 和 C ABI。
 迁移检查命令 `python3 tools/check_references.py` 已通过；ref/ 与来源锁保持不变。
 实际调用和跨架构边界见 `docs/phase2.md`、`tests/phase2.py` 和 `progress.md`。
+
+## Phase 3 资源归档（2026-09-10）
+
+迁移前 `python3 tools/check_references.py` 全部通过；ref/ 和来源锁未修改。
+
+| 目的文件 | 参考及固定提交 | 版权与适配差异 |
+| --- | --- | --- |
+| `core/archive.c` | `ref/grub/grub-core/fs/newc.c`、`cpio_common.c`，`2f972128c48b90bf8b63aadffe6d546976e1dee6` | 核对公开 newc 布局、4 字节对齐和 trailer；新写有界内存 reader，没有复制上游实现。严格 hex/范围/路径/类型检查；不引入 disk/archelp、全局错误或模块注册/卸载。 |
+| `core/sha256.c` | 标准 SHA-256 算法 | 本项目新写；已知答案及 Python hashlib 独立比较，未从参考树迁移实现。 |
+| `platform/resource.c`、`include/boot/{archive,resource}.h`、packer 和测试 | 本项目设计 | 使用已有 context/物理内存/模块接口；新写 manifest 校验、BL 副本和内嵌 section 适配。 |
+| `resources/boot.lua`、`resources/fonts/minimal.hex` | 本项目新写/绘制 | GPL-3.0-or-later；5×7 glyph 为最小诊断子集，没有第三方字体数据。 |
+
+上述新代码均标记 SPDX GPL-3.0-or-later。未迁移完整磁盘文件系统；支持 profile、资源
+输入和执行证据见 `docs/phase3.md`、`tests/phase3.py` 和 `progress.md`。

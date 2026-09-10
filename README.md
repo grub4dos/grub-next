@@ -76,7 +76,16 @@ runtime 没有自制 PE loader。
 模块 API、metadata 格式、树外构建命令和生命周期约束见 [Phase 2 SDK](docs/phase2.md)。
 运行 `SOURCE_DATE_EPOCH=1704067200 python3 tests/phase2.py` 可验证五个 target 的实际模块
 执行、失败回滚、重复加载拒绝及 SDK 独立构建。日志保存在 `build/phase2/`。
-当前样本为编译期嵌入；resource archive 与签名认证分别留在后续阶段。
+当前样本通过 Phase 3 resource archive 提供；签名认证仍在后续阶段。
+
+## Phase 3 资源归档
+
+运行 `SOURCE_DATE_EPOCH=1704067200 python3 tests/phase3.py` 验证三种资源输入、五个 target
+的模块实际执行、损坏拒绝以及 archive/manifest/runtime 的独立路径可复现构建。
+每个 target 生成 `resource.cpio` 和 `resource.manifest.sha256`，EFI 映像包含只读 `.bootres`
+section；BIOS 可以使用 Multiboot2 module、Linux initrd 或无外部输入的内嵌资源。
+格式、接口和启动示例见 [Phase 3 资源说明](docs/phase3.md)。Lua 源文件及最小字体已经打包，
+本阶段不执行 Lua 或渲染字体；SHA-256 内容清单用于损坏检测，没有签名认证。
 
 ## 额外检查
 

@@ -13,9 +13,10 @@ import time
 import phase0
 ROOT = phase0.ROOT
 OUTPUT = ROOT / "build/phase1"
+RESOURCE_INPUT = False
 COMMON = ["BOOT:PASS:firmware-time", "BOOT:PASS:loader-abort-commit",
           "BOOT:PASS:memory-owners", "BOOT:PASS:memory-log", "BOOT:PANIC:phase1-reset"]
-def qemu(output, name, executable, args, markers, timeout=90):
+def qemu(output, name, executable, args, markers, timeout=90, expected_panic="phase1-reset"):
     serial = output/f"{name}.serial.log"
     serial.write_bytes(b"")
     cmd = [executable, "-accel", "tcg", "-display", "none", "-monitor", "none",
@@ -33,7 +34,7 @@ def qemu(output, name, executable, args, markers, timeout=90):
                 if p.poll() is not None:
                     if p.returncode != 0 or not all(m in text for m in markers):
                         raise RuntimeError(f"{name}: exited {p.returncode}, missing markers; {text[-2000:]}")
-                    if "BOOT:PANIC:" in text.replace("BOOT:PANIC:phase1-reset", "") or "BOOT:FAIL" in text:
+                    if "BOOT:PANIC:" in text.replace(f"BOOT:PANIC:{expected_panic}", "") or "BOOT:FAIL" in text:
                         raise RuntimeError(f"{name}: failure marker")
                     print(f"PASS: {name} including reset", flush=True)
                     return {"markers": markers, "exit_code": p.returncode, "command": cmd}
@@ -52,9 +53,13 @@ def bios_iso(output, linux=False):
     (root/"boot/grub").mkdir(parents=True, exist_ok=True)
     name = "boot-linux.bz" if linux else "boot-core.elf"
     shutil.copyfile(output/"i386-pc"/name, root/"boot"/name)
+    resource = ""
+    if RESOURCE_INPUT:
+        shutil.copyfile(output/"i386-pc/resource.cpio", root/"boot/resource.cpio")
+        resource = ("initrd" if linux else "module2") + " /boot/resource.cpio\n"
     (root/"boot/grub/grub.cfg").write_text(
         'set timeout=0\nset default=0\nmenuentry "Phase1" {\n '+
-        ("linux" if linux else "multiboot2")+f" /boot/{name}\n boot\n}}\n")
+        ("linux" if linux else "multiboot2")+f" /boot/{name}\n {resource} boot\n}}\n")
     iso = output/("linux.iso" if linux else "mb.iso")
     phase0.run("grub-mkrescue", "-o", iso, root, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     return iso
@@ -86,6 +91,9 @@ def main():
     artifacts = {"host":["boot-core-test"], "i386-pc":["boot-core.elf", "boot-linux.bz"]}
     for target in phase0.TARGETS[2:]:
         artifacts[target] = ["boot-core.efi"]
+    if RESOURCE_INPUT:
+        for names in artifacts.values():
+            names += ["resource.cpio", "resource.manifest.sha256"]
     for target, names in artifacts.items():
         for name in names:
             p = output/target/name
@@ -109,14 +117,18 @@ def main():
             ("bios-low-ram", "qemu32", "128M", "BOOT:PASS:no-high-ram")]:
             report["qemu"][name] = qemu(output, name, "qemu-system-x86_64",
                 ["-m",ram,"-cpu",cpu,"-cdrom",iso,"-boot","d"],
-                COMMON+["BOOT:PASS:context:multiboot2",high_marker,"BOOT:PASS:resident-int15-e820"])
+                COMMON+["BOOT:PASS:context:multiboot2",high_marker,"BOOT:PASS:resident-int15-e820"]+
+                (["BOOT:PASS:resource-multiboot2"] if RESOURCE_INPUT else []))
         iso = bios_iso(output, True)
         report["qemu"]["bios-linux"] = qemu(output, "bios-linux", "qemu-system-x86_64",
             ["-m","6G","-cpu","qemu32,+pae,-lm","-cdrom",iso,"-boot","d"],
-            COMMON+["BOOT:PASS:context:linux","BOOT:PASS:high-pae-copy-hash-fp","BOOT:PASS:resident-int15-e820"])
+            COMMON+["BOOT:PASS:context:linux","BOOT:PASS:high-pae-copy-hash-fp","BOOT:PASS:resident-int15-e820"]+
+            (["BOOT:PASS:resource-linux-initrd"] if RESOURCE_INPUT else []))
         report["qemu"]["bios-linux-real"] = qemu(output, "bios-linux-real", "qemu-system-x86_64",
-            ["-m","6G","-cpu","qemu32,+pae,-lm","-kernel",output/"i386-pc/boot-linux.bz"],
-            COMMON+["BOOT:PASS:context:linux","BOOT:PASS:high-pae-copy-hash-fp","BOOT:PASS:resident-int15-e820"])
+            ["-m","6G","-cpu","qemu32,+pae,-lm","-kernel",output/"i386-pc/boot-linux.bz"]+
+            (["-initrd", output/"i386-pc/resource.cpio"] if RESOURCE_INPUT else []),
+            COMMON+["BOOT:PASS:context:linux","BOOT:PASS:high-pae-copy-hash-fp","BOOT:PASS:resident-int15-e820"]+
+            (["BOOT:PASS:resource-linux-initrd"] if RESOURCE_INPUT else []))
         if "BOOT:PASS:linux-real-setup" not in (output/"bios-linux-real.debug.log").read_text():
             raise RuntimeError("Linux real-mode setup was not executed")
     if args.only != "bios":

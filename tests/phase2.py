@@ -9,8 +9,8 @@ import tempfile
 import phase1
 
 
-def main():
-    phase1.OUTPUT = phase1.ROOT / "build/phase2"
+def main(output=None):
+    phase1.OUTPUT = output or phase1.ROOT / "build/phase2"
     phase1.COMMON += ["BOOT:PASS:module-sdk-execution",
                       "BOOT:PASS:module-duplicate-rollback-freeze",
                       "BOOT:PASS:module-api-call"]

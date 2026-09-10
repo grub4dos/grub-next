@@ -1,6 +1,6 @@
 # 实施进度
 
-更新：2026-09-10。Phase 2 模块 ABI/SDK 已实现；Phase 1 平台/内存切片持续回归，
+更新：2026-09-10。Phase 3 自包含资源归档已实现；Phase 1/2 平台、内存和模块切片持续回归，
 全部平台入口和新增模块执行均有实际 QEMU 启动证据。
 连续跨 4 GiB RAM 的测试范围见下文；未将普通 PC 的保留区当作可写 RAM。
 
@@ -164,8 +164,63 @@ git diff --check
 SDK/API 与调用约束见 [docs/phase2.md](docs/phase2.md)。CI 已接入同一测试，未声明远端 Actions 已执行。
 
 边界：当前模块为受信任 native code，hash/signature metadata 只接受明确的未签名格式，
-不声称密码学认证或逐段 W^X。验收资源为编译期嵌入，CPIO/manifest 属于 Phase 3；
+不声称密码学认证或逐段 W^X。上述 Phase 2 交付使用直接嵌入样本；现已由下文 Phase 3
+CPIO/manifest 取代；
 真实硬件、Secure Boot、Lua、菜单和 OS handoff 尚未实现/验证。未改 ref/、来源锁，未提交或推送。
+
+## Phase 3 完成交付（2026-09-10）
+
+- `core/archive.c`：参考锁定 GRUB `newc.c` / `cpio_common.c` 的格式布局，新写无 libc
+  的有界只读 reader。完整 archive 校验后公开索引；严格 hex、长度、trailer、路径、
+  重复项和类型检查。上限为 16 MiB / 128 条记录 / 255 字节路径。
+- `tools/pack_resources.py` / CMake：为每个 target 生成 `resource.cpio` 和 SHA-256
+  内容清单。路径排序、固定 metadata、零 mtime、稳定 inode；不带入 host 路径和时间。
+  样本模块、默认 `boot.lua`、原创最小诊断字体随 archive 打包。
+- `platform/resource.c`：EFI 直接使用只读 `.bootres` section；BIOS 读取第一个
+  Multiboot2 module 或 Linux 32 位 initrd，经 physical API 复制到 BL 内存。
+  无外部输入时使用内嵌 archive；无效/空输入、OOM、读取或 hash 失败不静默回退，
+  失败释放副本。模块在完整 archive/manifest 校验后才进入 Phase 2 loader。
+- LoongArch 构建期 PE 转换保留独立只读不可执行资源 section，更新 section 布局和
+  PE size accounting。四种 EFI 的 resource section 均与独立 archive 逐字节一致。
+- `tests/phase3.py` 复用 Phase 1/2 的实际执行/事务/SDK 验收；CI 已切换到包含它们的
+  Phase 3 超集，并保留 Phase 0、GCC、sanitizer job 和资源证据上传。
+
+实际验收结果：
+
+| 项目 | 结果与边界 |
+| --- | --- |
+| 五个 target / 三种输入 | 12 个 QEMU 场景通过：原 9 个平台/内存/模块场景使用外部 BIOS 资源或 EFI 内嵌资源，另增加无磁盘 BIOS 内嵌资源和两种损坏输入拒绝 |
+| BIOS 无文件系统资源消费 | SeaBIOS `-kernel`，分别有/无 `-initrd`，不连接磁盘/CD；配置和字体取得成功，archive 内模块实际执行返回 42 |
+| EFI 资源 | IA32/X64/ARM64/LoongArch64 固件加载并执行模块；只读 `.bootres` 字节和资源清单匹配 |
+| 可复现 | 不同源码路径独立构建比较 7 个既有 runtime/host 产物、6 份 archive、6 份 manifest；五种 target 的 10 个树外 SDK 模块相同 |
+| Host / sanitizer | 9/9 CTest 通过 ASan/UBSan；逐字节截断、10,000 次变异、独立 hashlib、路径/链接/重复/溢出/清单异常，另有 OOM/I/O/空输入和失败清理 |
+| Packer / 互操作 | 命令行改变来源路径、mtime、参数顺序和 epoch，产物相同；本机 GNU cpio 双向读取，提取内容逐字节一致 |
+| 回归 | Phase 0 全套和 GCC x86 实际启动通过；引用检查、格式和 `git diff --check` 通过 |
+
+Ubuntu/WSL 实际命令：
+
+```sh
+python3 tools/check_references.py
+SOURCE_DATE_EPOCH=1704067200 python3 tests/phase3.py
+cmake -S . -B build/p3-dev -G Ninja -DCMAKE_C_COMPILER=clang -DBOOT_SANITIZERS=ON
+cmake --build build/p3-dev
+ctest --test-dir build/p3-dev --output-on-failure
+SOURCE_DATE_EPOCH=1704067200 python3 tests/phase0.py
+python3 tests/gcc_smoke.py
+git diff --check
+```
+
+原始串口、QEMU 命令、固件/产物摘要及 SDK 对比在 `build/phase3/` 和
+`build/phase3/results.json`。全套输出在 `build/phase3-full.log`；回归与 sanitizer 输出在
+`build/phase3-{phase0,gcc,sanitizers}.log`。持久摘要见
+[docs/phase3-evidence.json](docs/phase3-evidence.json)，接口和格式见
+[docs/phase3.md](docs/phase3.md)。这里只声明本地结果，未声明远端 Actions 已执行。
+
+边界：CPIO 只接受限定的未压缩 `070701` profile，不支持 symlink、硬链接、设备节点、
+CRC newc 或拼接 archive。Lua 是源文件资源，尚不执行；字体仅为空格、问号、数字和大写
+拉丁字母的 5×7 子集，尚不渲染。manifest 用于损坏检测，没有密码学认证。
+资源输入未增加任意 Linux 高地址 initrd 协议支持；没有声称真实硬件、Secure Boot、
+磁盘文件系统、菜单或 OS handoff 已完成。未改 ref/ 或来源锁，未提交或推送。
 
 ## Phase 0 保留基线
 

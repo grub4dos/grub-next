@@ -6,6 +6,9 @@ SECTIONS {
     .text : { *(.text*) }
     . = ALIGN(4096);
     .rodata : { *(.rodata*) }
+    . = ALIGN(4096);
+    .bootres : { KEEP(*(.bootres)) }
+    . = ALIGN(4096);
     .data : { *(.data*) *(.got*) }
     .rela.dyn : { *(.rela.dyn) }
     .dynamic : { *(.dynamic) }

@@ -40,17 +40,31 @@ for page, entries in sorted(relocations.items()):
 if not reloc:
     reloc = bytearray(struct.pack("<IIHH", 0x1000, 12, 0, 0))
 rva = align(end, 4096)
-header = bytearray(512)
+# Keep the resource archive in its own read-only PE section, just as the
+# native COFF linkers do for the other EFI targets.
+strings = sections[struct.unpack_from("<H", data, 62)[0]]
+names = data[strings[4]:strings[4]+strings[5]]
+resource = next(s for s in alloc if names[s[0]:].split(b"\0", 1)[0] == b".bootres")
+res_start, res_size = resource[3], resource[5]
+tail = align(res_start + res_size, 4096)
+assert res_start % 4096 == 0 and tail < end
+payloads = [
+    (b".core", 0x1000, res_start-0x1000, 0xe0000060),
+    (b".bootres", res_start, res_size, 0x40000040),
+    (b".data", tail, end-tail, 0xc0000040),
+]
+header = bytearray(1024)
 header[:2] = b"MZ"
 struct.pack_into("<I", header, 0x3c, 0x80)
 header[0x80:0x84] = b"PE\0\0"
-struct.pack_into("<HHIIIHH", header, 0x84, 0x6264, 2, 0, 0, 0, 240, 0x22)
+struct.pack_into("<HHIIIHH", header, 0x84, 0x6264, 4, 0, 0, 0, 240, 0x22)
 opt = 0x98
 struct.pack_into("<H", header, opt, 0x20b)
-struct.pack_into("<III", header, opt+4, len(body), align(len(reloc),512), 0)
+struct.pack_into("<III", header, opt+4, align(res_start-0x1000,512),
+                 sum(align(length,512) for _, _, length, _ in payloads)+align(len(reloc),512), 0)
 struct.pack_into("<IIQ", header, opt+16, entry, 0x1000, 0)
 struct.pack_into("<II", header, opt+32, 4096, 512)
-struct.pack_into("<II", header, opt+56, align(rva+len(reloc),4096), 512)
+struct.pack_into("<II", header, opt+56, align(rva+len(reloc),4096), len(header))
 struct.pack_into("<HH", header, opt+68, 10, 0x40)
 struct.pack_into("<QQQQ", header, opt+72, 0x100000, 0x1000, 0x100000, 0x1000)
 struct.pack_into("<I", header, opt+108, 16)
@@ -59,6 +73,11 @@ def section(off, name, virtual_size, address, raw_size, raw_offset, flags):
     header[off:off+8] = name.ljust(8,b"\0")
     struct.pack_into("<IIIIIIHHI", header, off+8, virtual_size, address, raw_size,
                      raw_offset, 0, 0, 0, 0, flags)
-section(opt+240, b".core", end-0x1000, 0x1000, len(body), 512, 0xe0000060)
-section(opt+280, b".reloc", len(reloc), rva, align(len(reloc),512), 512+len(body), 0x42000040)
-Path(sys.argv[2]).write_bytes(header+body+reloc+bytes(align(len(reloc),512)-len(reloc)))
+raw = bytearray()
+for i, (name, address, length, flags) in enumerate(payloads):
+    chunk = body[address-0x1000:address-0x1000+length]
+    chunk += bytes(-len(chunk) % 512)
+    section(opt+240+i*40, name, length, address, len(chunk), len(header)+len(raw), flags)
+    raw += chunk
+section(opt+360, b".reloc", len(reloc), rva, align(len(reloc),512), len(header)+len(raw), 0x42000040)
+Path(sys.argv[2]).write_bytes(header+raw+reloc+bytes(align(len(reloc),512)-len(reloc)))

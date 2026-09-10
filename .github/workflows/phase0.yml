@@ -35,7 +35,7 @@ jobs:
           name: gcc-evidence
           path: build/gcc-smoke/*.log
 
-  phase2:
+  phase3:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
@@ -51,7 +51,7 @@ jobs:
       - name: Build, reproduce and boot every entry
         env:
           SOURCE_DATE_EPOCH: '1704067200'
-        run: python3 tests/phase2.py
+        run: python3 tests/phase3.py
       - name: Host memory and parser sanitizers
         run: |
           cmake -S . -B build/sanitizers -G Ninja -DCMAKE_C_COMPILER=clang -DCMAKE_BUILD_TYPE=Debug -DBOOT_SANITIZERS=ON
@@ -60,10 +60,12 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: phase2-evidence
+          name: phase3-evidence
           path: |
-            build/phase2/*.log
-            build/phase2/results.json
-            build/phase2/*/*.elf
-            build/phase2/*/*.efi
-            build/phase2/*/*.bz
+            build/phase3/*.log
+            build/phase3/results.json
+            build/phase3/*/*.elf
+            build/phase3/*/*.efi
+            build/phase3/*/*.bz
+            build/phase3/*/resource.cpio
+            build/phase3/*/resource.manifest.sha256
