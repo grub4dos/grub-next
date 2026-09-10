@@ -1,0 +1,115 @@
+{
+  "commit": "2f972128c48b90bf8b63aadffe6d546976e1dee6",
+  "files": [
+    {
+      "path": "grub-core/fs/fat.c",
+      "role": "phase4",
+      "sha256": "33e3da3c1544149835b7ec87563e0c7629d849afc162444d6415c9faee46aee5"
+    },
+    {
+      "path": "grub-core/fs/ext2.c",
+      "role": "phase4",
+      "sha256": "ca194ea4d903725fdd000d349f8909fb839f1db7e0b38a64263591109fcc4412"
+    },
+    {
+      "path": "grub-core/fs/iso9660.c",
+      "role": "phase4",
+      "sha256": "40aa645930b33907dbe0cf7ded3bf4a51356890ca827589025aa8d1c86a387f5"
+    },
+    {
+      "path": "grub-core/fs/ntfs.c",
+      "role": "phase4",
+      "sha256": "3b2228c7c5c656e7e0cc751dbcdfe1e6bdb54c701c6179f06c02e7a5ddea3735"
+    },
+    {
+      "path": "grub-core/fs/ntfscomp.c",
+      "role": "phase4",
+      "sha256": "8a9a60b3d25cf6b963d2f72517908f1096e935f609735e76887c4668d86fdc55"
+    },
+    {
+      "path": "grub-core/fs/fshelp.c",
+      "role": "phase4",
+      "sha256": "43d7d4c3228fca6e7ec7631eb5c8a44172aa0a20fc7ce8f12aa8e3997d29d9fc"
+    },
+    {
+      "path": "grub-core/disk/diskfilter.c",
+      "role": "phase5-staged",
+      "sha256": "2760910813b4a75825beec30f778515b65eb5870c09e55f68dca126a2546af5a"
+    },
+    {
+      "path": "grub-core/disk/lvm.c",
+      "role": "phase5-staged",
+      "sha256": "73dd8ba02f11dd0e61f2a4035e287717f4dd0d9238cfe61f5460303384e1469a"
+    },
+    {
+      "path": "grub-core/disk/mdraid_linux.c",
+      "role": "phase5-staged",
+      "sha256": "c4b6adc2a85a51e4342e1e1014d396f50aeaf84043b8a3498c11dde6e67be894"
+    },
+    {
+      "path": "grub-core/disk/mdraid_linux_be.c",
+      "role": "phase5-staged",
+      "sha256": "c3a451480d5ae9b9860f59cd2f0d1c4c2c41e97bd5ef89ce885ff763b3d4821f"
+    },
+    {
+      "path": "grub-core/disk/mdraid1x_linux.c",
+      "role": "phase5-staged",
+      "sha256": "f1d62e08fb81d316eb86729d7549fc37e888bd33ece0d44ff809969a8044f5b4"
+    },
+    {
+      "path": "grub-core/disk/raid5_recover.c",
+      "role": "phase5-staged",
+      "sha256": "86822a3be120a3af42be64532ace2865ffc0a1d387f871f0e73c4c73d821b21e"
+    },
+    {
+      "path": "grub-core/disk/raid6_recover.c",
+      "role": "phase5-staged",
+      "sha256": "862dcdbe79510fe6916e5161e75a189fa285993b1c55082212d25f21ca50d513"
+    },
+    {
+      "path": "grub-core/disk/dmraid_nvidia.c",
+      "role": "phase5-staged",
+      "sha256": "86a6b6dfe62ce93fa12777b508aa8422360116575244394f384f7d58f4dc227a"
+    },
+    {
+      "path": "grub-core/disk/ldm.c",
+      "role": "phase5-staged",
+      "sha256": "0bf1116a09dbdc372f4629ced087f74849a327706f72cfae06d4c55ce99c7976"
+    },
+    {
+      "path": "include/grub/fshelp.h",
+      "role": "header",
+      "sha256": "48074fe5dd525f7f210fb26cf46ebaf6399866feeccfaf6bb483d470ba0f4688"
+    },
+    {
+      "path": "include/grub/ntfs.h",
+      "role": "header",
+      "sha256": "535e1cc45f7a7845f6c7c7c03f2d6bf1122f2f347d8357c74eaeb38a85b5478a"
+    },
+    {
+      "path": "include/grub/fat.h",
+      "role": "header",
+      "sha256": "d674a60b6ee3f73d1e4a0212ddc34ed7ff6e68621d6ec9d3558d97e2f1e154a9"
+    },
+    {
+      "path": "include/grub/datetime.h",
+      "role": "header",
+      "sha256": "53f9ac4c11084de84acffa8842ec4a613ab0650e7d16badf59b3e85d3385c194"
+    },
+    {
+      "path": "include/grub/compiler.h",
+      "role": "header",
+      "sha256": "7b85d7db31a586e5258d8745f86689a8bbc0947b125888a993acd83097953cb3"
+    },
+    {
+      "path": "include/grub/safemath.h",
+      "role": "header",
+      "sha256": "ceb20344dab94bff2a6e13b5991e417e03913c5dfeae30f9f5882e31ba774d8f"
+    },
+    {
+      "path": "include/grub/diskfilter.h",
+      "role": "header",
+      "sha256": "846269603da5b8a17fd5d46d181dd358c26632674a058d2c6a2114cf1103aafe"
+    }
+  ]
+}

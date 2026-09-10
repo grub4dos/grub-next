@@ -60,7 +60,9 @@ struct boot_efi_services
     void *unused1_tail[5];
     boot_efi_status(BOOT_EFI *load_image)(uint8_t, void *, void *, void *, uintptr_t, void **);
     boot_efi_status(BOOT_EFI *start_image)(void *, uintptr_t *, uint16_t **);
-    void *unused2[13];
+    void *unused2[12];
+    boot_efi_status(BOOT_EFI *locate_handle_buffer)(uint32_t, const void *, void *, uintptr_t *,
+                                                    void ***);
     boot_efi_status(BOOT_EFI *locate_protocol)(const void *, void *, void **);
 };
 struct boot_efi_system

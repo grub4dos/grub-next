@@ -1,0 +1,1832 @@
+{
+  "commands": [
+    "python3 tools/check_references.py",
+    "python3 tools/import_grub.py",
+    "SOURCE_DATE_EPOCH=1704067200 python3 tests/phase4.py",
+    "python3 tests/storage.py",
+    "SOURCE_DATE_EPOCH=1704067200 python3 tests/phase0.py",
+    "python3 tests/gcc_smoke.py",
+    "git diff --check"
+  ],
+  "date": "2026-09-10",
+  "final_build_check": "All 22 final artifact hashes match the QEMU and independent-path reproducibility record",
+  "grub_import": {
+    "commit": "2f972128c48b90bf8b63aadffe6d546976e1dee6",
+    "compiled_sources": 6,
+    "files": [
+      {
+        "path": "grub-core/fs/fat.c",
+        "role": "phase4",
+        "sha256": "33e3da3c1544149835b7ec87563e0c7629d849afc162444d6415c9faee46aee5"
+      },
+      {
+        "path": "grub-core/fs/ext2.c",
+        "role": "phase4",
+        "sha256": "ca194ea4d903725fdd000d349f8909fb839f1db7e0b38a64263591109fcc4412"
+      },
+      {
+        "path": "grub-core/fs/iso9660.c",
+        "role": "phase4",
+        "sha256": "40aa645930b33907dbe0cf7ded3bf4a51356890ca827589025aa8d1c86a387f5"
+      },
+      {
+        "path": "grub-core/fs/ntfs.c",
+        "role": "phase4",
+        "sha256": "3b2228c7c5c656e7e0cc751dbcdfe1e6bdb54c701c6179f06c02e7a5ddea3735"
+      },
+      {
+        "path": "grub-core/fs/ntfscomp.c",
+        "role": "phase4",
+        "sha256": "8a9a60b3d25cf6b963d2f72517908f1096e935f609735e76887c4668d86fdc55"
+      },
+      {
+        "path": "grub-core/fs/fshelp.c",
+        "role": "phase4",
+        "sha256": "43d7d4c3228fca6e7ec7631eb5c8a44172aa0a20fc7ce8f12aa8e3997d29d9fc"
+      },
+      {
+        "path": "grub-core/disk/diskfilter.c",
+        "role": "phase5-staged",
+        "sha256": "2760910813b4a75825beec30f778515b65eb5870c09e55f68dca126a2546af5a"
+      },
+      {
+        "path": "grub-core/disk/lvm.c",
+        "role": "phase5-staged",
+        "sha256": "73dd8ba02f11dd0e61f2a4035e287717f4dd0d9238cfe61f5460303384e1469a"
+      },
+      {
+        "path": "grub-core/disk/mdraid_linux.c",
+        "role": "phase5-staged",
+        "sha256": "c4b6adc2a85a51e4342e1e1014d396f50aeaf84043b8a3498c11dde6e67be894"
+      },
+      {
+        "path": "grub-core/disk/mdraid_linux_be.c",
+        "role": "phase5-staged",
+        "sha256": "c3a451480d5ae9b9860f59cd2f0d1c4c2c41e97bd5ef89ce885ff763b3d4821f"
+      },
+      {
+        "path": "grub-core/disk/mdraid1x_linux.c",
+        "role": "phase5-staged",
+        "sha256": "f1d62e08fb81d316eb86729d7549fc37e888bd33ece0d44ff809969a8044f5b4"
+      },
+      {
+        "path": "grub-core/disk/raid5_recover.c",
+        "role": "phase5-staged",
+        "sha256": "86822a3be120a3af42be64532ace2865ffc0a1d387f871f0e73c4c73d821b21e"
+      },
+      {
+        "path": "grub-core/disk/raid6_recover.c",
+        "role": "phase5-staged",
+        "sha256": "862dcdbe79510fe6916e5161e75a189fa285993b1c55082212d25f21ca50d513"
+      },
+      {
+        "path": "grub-core/disk/dmraid_nvidia.c",
+        "role": "phase5-staged",
+        "sha256": "86a6b6dfe62ce93fa12777b508aa8422360116575244394f384f7d58f4dc227a"
+      },
+      {
+        "path": "grub-core/disk/ldm.c",
+        "role": "phase5-staged",
+        "sha256": "0bf1116a09dbdc372f4629ced087f74849a327706f72cfae06d4c55ce99c7976"
+      },
+      {
+        "path": "include/grub/fshelp.h",
+        "role": "header",
+        "sha256": "48074fe5dd525f7f210fb26cf46ebaf6399866feeccfaf6bb483d470ba0f4688"
+      },
+      {
+        "path": "include/grub/ntfs.h",
+        "role": "header",
+        "sha256": "535e1cc45f7a7845f6c7c7c03f2d6bf1122f2f347d8357c74eaeb38a85b5478a"
+      },
+      {
+        "path": "include/grub/fat.h",
+        "role": "header",
+        "sha256": "d674a60b6ee3f73d1e4a0212ddc34ed7ff6e68621d6ec9d3558d97e2f1e154a9"
+      },
+      {
+        "path": "include/grub/datetime.h",
+        "role": "header",
+        "sha256": "53f9ac4c11084de84acffa8842ec4a613ab0650e7d16badf59b3e85d3385c194"
+      },
+      {
+        "path": "include/grub/compiler.h",
+        "role": "header",
+        "sha256": "7b85d7db31a586e5258d8745f86689a8bbc0947b125888a993acd83097953cb3"
+      },
+      {
+        "path": "include/grub/safemath.h",
+        "role": "header",
+        "sha256": "ceb20344dab94bff2a6e13b5991e417e03913c5dfeae30f9f5882e31ba774d8f"
+      },
+      {
+        "path": "include/grub/diskfilter.h",
+        "role": "header",
+        "sha256": "846269603da5b8a17fd5d46d181dd358c26632674a058d2c6a2114cf1103aafe"
+      }
+    ],
+    "patches": [
+      "0001-ext4-leading-hole.patch",
+      "0002-fat-self-cycle.patch"
+    ],
+    "pristine_files": 22,
+    "staged_disk_sources": 9
+  },
+  "host_ctest_count": 12,
+  "host_sanitizers": {
+    "content": {
+      "files": {
+        "Long Unicode \u6d4b\u8bd5.txt": "41b78429282d22a21b658289ec708417bcae639d4a74862a858521e4e9f55e0c",
+        "empty.bin": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "large.bin": "47bc2923786a97a51095027fdc27e5f6beef350c58f47e16306cc222d4efc874",
+        "nested/inside.txt": "f17d9928c80bb3ac36a7babd204d03d6caa565a7680bdef4d7fcc965a1e3b11a",
+        "probe.bin": "f871df54997e4d27c096f10362f55a7677479c91d50c08af142975382241cd7f",
+        "zeros.bin": "93be6074076192b865ee79aa1043a8e32ace5dccbbaae85c13f9e14135550b95"
+      },
+      "images": {
+        "ebr4096.img": {
+          "block": 4096,
+          "kind": "ebr",
+          "partition": 5
+        },
+        "ebr512.img": {
+          "block": 512,
+          "kind": "ebr",
+          "partition": 5
+        },
+        "ext2.img": {
+          "block": 512,
+          "kind": "ext"
+        },
+        "ext3.img": {
+          "block": 512,
+          "kind": "ext"
+        },
+        "ext4.img": {
+          "block": 512,
+          "kind": "ext"
+        },
+        "fat12.img": {
+          "block": 512,
+          "kind": "fat"
+        },
+        "fat16.img": {
+          "block": 512,
+          "kind": "fat"
+        },
+        "fat32.img": {
+          "block": 512,
+          "kind": "fat"
+        },
+        "gpt4096.img": {
+          "block": 4096,
+          "kind": "gpt",
+          "partition": 1
+        },
+        "gpt512.img": {
+          "block": 512,
+          "kind": "gpt",
+          "partition": 1
+        },
+        "iso.img": {
+          "block": 2048,
+          "kind": "iso"
+        },
+        "mbr4096.img": {
+          "block": 4096,
+          "kind": "mbr",
+          "partition": 1
+        },
+        "mbr512.img": {
+          "block": 512,
+          "kind": "mbr",
+          "partition": 1
+        },
+        "ntfs.img": {
+          "block": 512,
+          "kind": "ntfs"
+        }
+      }
+    },
+    "corruption": [
+      {
+        "case": "fat-invalid-geometry",
+        "error": "storage status=7"
+      },
+      {
+        "case": "fat-cyclic-file",
+        "error": "storage status=8"
+      },
+      {
+        "case": "ext-invalid-inode-size",
+        "error": "storage status=7"
+      },
+      {
+        "case": "ext-encrypted-file",
+        "error": "storage status=2"
+      },
+      {
+        "case": "ntfs-mft-fixup",
+        "error": "storage status=8"
+      },
+      {
+        "case": "ntfs-attribute-offset-overflow",
+        "error": "storage status=8"
+      },
+      {
+        "case": "ntfs-invalid-cluster",
+        "error": "storage status=8"
+      },
+      {
+        "case": "iso-descriptor-magic",
+        "error": "storage status=8"
+      },
+      {
+        "case": "gpt-header-crc",
+        "error": "storage status=8"
+      },
+      {
+        "case": "gpt-entry-crc",
+        "error": "storage status=8"
+      },
+      {
+        "case": "mbr-range-overflow",
+        "error": "storage status=8"
+      },
+      {
+        "case": "ebr-cycle",
+        "error": "storage status=8"
+      }
+    ],
+    "mutations": {
+      "ext2": 2000,
+      "ext3": 2000,
+      "ext4": 2000,
+      "fat12": 2000,
+      "fat16": 2000,
+      "fat32": 2000,
+      "gpt4096": 2000,
+      "gpt512": 2000,
+      "iso": 2000,
+      "ntfs": 2000
+    },
+    "sha256": {
+      "ebr4096.img": "eb17821faa9ea7e72e3701d5d4f505e61e40890f80f3fc556b03c98c5d928460",
+      "ebr512.img": "652e22fb80bc636ac07dabbb377c4f13174a5b683873fa0dbfdb4a321bb7b7b9",
+      "ext2.img": "6947beac4e0d637add716b139563ef70c6777ff41dbe32d74f7fb9b72ba76732",
+      "ext3.img": "d81f6dcbbbb5394730b9d33165d48f8180ceee1f3aebd6f4845a4c483f3a9669",
+      "ext4.img": "41bb350fc308b766239fc3f43a8f0be92555a94a84a43bebd435196259f89607",
+      "fat12.img": "2bc5d0b0d95ff939e43e81d237717024c90545a5b3b99b9d59641c61828feaa8",
+      "fat16.img": "f18460b88e2d2528c9d7b98eb979ab7193f40657d5993495dab6cc3ef0ad86ed",
+      "fat32.img": "a01e4467d9038cf992f08e93d5ff8c9fea78d6e873a6bd5748740a75f85f8234",
+      "gpt4096.img": "bf4b0024f44148527766bd154badecb6c4f4aff246ce74af4b2e275aeba1f170",
+      "gpt512.img": "cad06a7d674f4298f28e72949bc2ec4ffdd832eba9ce85dc327412c5a484c320",
+      "iso.img": "3f2dba17cd383de84ef9b5b6423b650f71ae4ecb66983f2e67ee3c563da25924",
+      "mbr4096.img": "f98645384ddaf1230664dc577013ad93f3350cf04112ce8e4d9bcaf4b652f2c0",
+      "mbr512.img": "4fdb5a520c4c1de8e2c59eb12d0b6a12296fee3d0a204ea15ac3a5cac10476db",
+      "ntfs.img": "0580f09b843156c1019f3ca3dc4b8b1fde57015ee020596bb8f3bd5f2f053417"
+    }
+  },
+  "qemu_log_sha256": {
+    "arm64-efi": "6fea199c551d135e4a1d5c9cc6c15f9a789b9cc4e3208e6633e401137be5c762",
+    "bios-corrupt-content": "1a0a918b4bb9f7ec81b1e0ee057bc149f4679c41a88632fb2df2aea4a213a907",
+    "bios-corrupt-header": "1a0a918b4bb9f7ec81b1e0ee057bc149f4679c41a88632fb2df2aea4a213a907",
+    "bios-diskless-embedded": "8a217a582cb49172508e0101e631f23a4978c08dd034005c983b4fc46fbbb5d3",
+    "bios-linux": "9df4f7f0393e77276e81ef9179983a7997cd1b89dc45cc69d08a3a88dde5c130",
+    "bios-linux-real": "9df4f7f0393e77276e81ef9179983a7997cd1b89dc45cc69d08a3a88dde5c130",
+    "bios-low-ram": "ed258ca3a38155c0dca295a93757176633537d8f1553e782a5697bfa2ebe6ee7",
+    "bios-no-pae": "edde2250862f15b47594341759e7b4fcd380c65deecd3d2b9ae19e4a74ea82f9",
+    "bios-pae-no-lm": "e458831c0e8c27f5f16bdc3bfc2d90068e7ff3187239f3c62827ee7c02785329",
+    "i386-efi": "d914ca0d470e32215f8ce960e4a464db1d3ae50e70ffdbebe2a4a82b93501152",
+    "loongarch64-efi": "dd421330871c6dd4946cf659c1a43212b700d3a217f4bc1be0cce828fbb425d5",
+    "storage-arm64-efi": "c91691cb0f022c87cfb63f197765fbf2256e899ed9efd45680dd8abbe87b0ffc",
+    "storage-bios-ebr512": "b72f4b5ab6dbd4e7af2bc71366c98c7e76bbe8436e14d1ceb53bfc057c4df693",
+    "storage-bios-ext2": "fe8b4b50c55c7d7f03377d9c2d12ef19d7089f9e88b98da278b36fbcfd8dc882",
+    "storage-bios-ext3": "fe8b4b50c55c7d7f03377d9c2d12ef19d7089f9e88b98da278b36fbcfd8dc882",
+    "storage-bios-ext4": "fe8b4b50c55c7d7f03377d9c2d12ef19d7089f9e88b98da278b36fbcfd8dc882",
+    "storage-bios-fat12": "b72f4b5ab6dbd4e7af2bc71366c98c7e76bbe8436e14d1ceb53bfc057c4df693",
+    "storage-bios-fat16": "b72f4b5ab6dbd4e7af2bc71366c98c7e76bbe8436e14d1ceb53bfc057c4df693",
+    "storage-bios-fat32": "b72f4b5ab6dbd4e7af2bc71366c98c7e76bbe8436e14d1ceb53bfc057c4df693",
+    "storage-bios-gpt512": "b72f4b5ab6dbd4e7af2bc71366c98c7e76bbe8436e14d1ceb53bfc057c4df693",
+    "storage-bios-iso": "e9956880f065a11ba989f90e9a2bc0b27b47e07bf82e6c4ab43fea1f4d10fcda",
+    "storage-bios-mbr512": "b72f4b5ab6dbd4e7af2bc71366c98c7e76bbe8436e14d1ceb53bfc057c4df693",
+    "storage-bios-ntfs": "fe5a9ff1fcd946a55984178f2e955b6b435af36a049db8cd8f9daa2b16b30fea",
+    "storage-i386-efi": "8ca69e41683b2d9f01f8d00dec0ed3bc5e7fc53bf86b67845b1e17c55f4ccb0a",
+    "storage-loongarch64-efi": "f2171cc61e27ed0ed0bd1c870104be74eff57f9a85f3b3f2db26f00733563efa",
+    "storage-x86_64-efi": "77843cedb8976473df58d9a043e56eeb69b5d283069189e46e2d9c8a6a69e43f",
+    "x86_64-efi": "2ef218cfec8325e6c535dfa5cff224fc5516a30bfdd640901f8706c7f1efbfcb"
+  },
+  "regressions": {
+    "gcc_x86": "passed",
+    "phase0": {
+      "qemu": "BIOS positive + four CPU rejection paths + EFI LoadImage/StartImage",
+      "sha256": {
+        "arm64-efi/libboot-runtime.a": "c604d69205b1a1e4be17d6b72a8aa1d8e6ff8859d0d64c1b562ded408e59783f",
+        "host/boot-info": "a5a68d4992853e9470080877732e334ad7e3ed92978ad137adfed41b7ceb762c",
+        "host/boot-log-test": "1b3340ddf786d5f49631e391e0b59515e9ad8722ad5cd61255bd59ad67a8f75c",
+        "i386-efi/libboot-runtime.a": "d6edc0b232270f6ddc0cfd38d09ac5be1008d2aae53fc7196631e8c9be2a7fef",
+        "i386-pc/boot-stage2.elf": "d83b4d27bf1e7641130a752fb1839efb930bf6996dbba82d5ad83f7464cf5767",
+        "loongarch64-efi/libboot-runtime.a": "d17e6544b8f5041b2a51dcc049e06cc87c4c90a3ec96d1a69dbda649ed8eef46",
+        "x86_64-efi/boot-efi-test.efi": "92c06cb84d649c95b1145fb3fd293a7eafc2712aba0f1eecf6716da1a30e8591",
+        "x86_64-efi/boot-hello.efi": "31c7b7c909c4bf3269ffbbc5bf544b55fb29c335d3f4880bb33784849adeee73"
+      },
+      "source_date_epoch": "1704067200"
+    }
+  },
+  "runtime": {
+    "corruption": [
+      {
+        "case": "fat-invalid-geometry",
+        "error": "storage status=7"
+      },
+      {
+        "case": "fat-cyclic-file",
+        "error": "storage status=8"
+      },
+      {
+        "case": "ext-invalid-inode-size",
+        "error": "storage status=7"
+      },
+      {
+        "case": "ext-encrypted-file",
+        "error": "storage status=2"
+      },
+      {
+        "case": "ntfs-mft-fixup",
+        "error": "storage status=8"
+      },
+      {
+        "case": "ntfs-attribute-offset-overflow",
+        "error": "storage status=8"
+      },
+      {
+        "case": "ntfs-invalid-cluster",
+        "error": "storage status=8"
+      },
+      {
+        "case": "iso-descriptor-magic",
+        "error": "storage status=8"
+      },
+      {
+        "case": "gpt-header-crc",
+        "error": "storage status=8"
+      },
+      {
+        "case": "gpt-entry-crc",
+        "error": "storage status=8"
+      },
+      {
+        "case": "mbr-range-overflow",
+        "error": "storage status=8"
+      },
+      {
+        "case": "ebr-cycle",
+        "error": "storage status=8"
+      }
+    ],
+    "filesystems": {
+      "files": {
+        "Long Unicode \u6d4b\u8bd5.txt": "41b78429282d22a21b658289ec708417bcae639d4a74862a858521e4e9f55e0c",
+        "empty.bin": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "large.bin": "47bc2923786a97a51095027fdc27e5f6beef350c58f47e16306cc222d4efc874",
+        "nested/inside.txt": "f17d9928c80bb3ac36a7babd204d03d6caa565a7680bdef4d7fcc965a1e3b11a",
+        "probe.bin": "f871df54997e4d27c096f10362f55a7677479c91d50c08af142975382241cd7f",
+        "zeros.bin": "93be6074076192b865ee79aa1043a8e32ace5dccbbaae85c13f9e14135550b95"
+      },
+      "images": {
+        "ebr4096.img": {
+          "block": 4096,
+          "kind": "ebr",
+          "partition": 5
+        },
+        "ebr512.img": {
+          "block": 512,
+          "kind": "ebr",
+          "partition": 5
+        },
+        "ext2.img": {
+          "block": 512,
+          "kind": "ext"
+        },
+        "ext3.img": {
+          "block": 512,
+          "kind": "ext"
+        },
+        "ext4.img": {
+          "block": 512,
+          "kind": "ext"
+        },
+        "fat12.img": {
+          "block": 512,
+          "kind": "fat"
+        },
+        "fat16.img": {
+          "block": 512,
+          "kind": "fat"
+        },
+        "fat32.img": {
+          "block": 512,
+          "kind": "fat"
+        },
+        "gpt4096.img": {
+          "block": 4096,
+          "kind": "gpt",
+          "partition": 1
+        },
+        "gpt512.img": {
+          "block": 512,
+          "kind": "gpt",
+          "partition": 1
+        },
+        "iso.img": {
+          "block": 2048,
+          "kind": "iso"
+        },
+        "mbr4096.img": {
+          "block": 4096,
+          "kind": "mbr",
+          "partition": 1
+        },
+        "mbr512.img": {
+          "block": 512,
+          "kind": "mbr",
+          "partition": 1
+        },
+        "ntfs.img": {
+          "block": 512,
+          "kind": "ntfs"
+        }
+      }
+    },
+    "firmware_sha256": {
+      "arm64-efi": "4a4cb7f6d8106bb2a7dd8c763fab14b1810152136fc4304e5b728f0043e84f12",
+      "i386-efi": "8aa6cf073ae217db099d7132beb2d18a4e3446a6a1d2917ce5b4f10424bd6a4d",
+      "loongarch64-efi": "edd5a67fe50f7597faecb2fe67c5733b9a31b0b345a2127c3c358a5737446ef7",
+      "x86_64-efi": "949bfa5389c4c48582737481e7d24f46b3a16b276ef44c4089a56858c6a0a446"
+    },
+    "qemu": {
+      "arm64-efi": {
+        "command": [
+          "qemu-system-aarch64",
+          "-accel",
+          "tcg",
+          "-display",
+          "none",
+          "-monitor",
+          "none",
+          "-no-reboot",
+          "-serial",
+          "file:/home/alive/grub-next/build/phase4/arm64-efi.serial.log",
+          "-M",
+          "virt",
+          "-cpu",
+          "cortex-a57",
+          "-m",
+          "512M",
+          "-drive",
+          "if=pflash,format=raw,readonly=on,file=/usr/share/AAVMF/AAVMF_CODE.fd",
+          "-drive",
+          "if=pflash,format=raw,file=/home/alive/grub-next/build/phase4/arm64-efi-vars.fd",
+          "-drive",
+          "if=none,id=esp,format=raw,file=fat:rw:/home/alive/grub-next/build/phase4/esp-arm64-efi",
+          "-device",
+          "virtio-blk-pci,drive=esp"
+        ],
+        "exit_code": 0,
+        "markers": [
+          "BOOT:PASS:firmware-time",
+          "BOOT:PASS:loader-abort-commit",
+          "BOOT:PASS:memory-owners",
+          "BOOT:PASS:memory-log",
+          "BOOT:PANIC:phase1-reset",
+          "BOOT:PASS:storage-ready",
+          "BOOT:PASS:storage-rescan-stale",
+          "BOOT:PASS:resource-manifest",
+          "BOOT:PASS:resource-config-font",
+          "BOOT:PASS:module-sdk-execution",
+          "BOOT:PASS:module-duplicate-rollback-freeze",
+          "BOOT:PASS:module-api-call",
+          "BOOT:PASS:efi-context:arm64-efi",
+          "BOOT:PASS:fp-state",
+          "BOOT:PASS:efi-bs-rt-loader-types",
+          "BOOT:PASS:efi-firmware-reservations"
+        ]
+      },
+      "bios-corrupt-content": {
+        "command": [
+          "qemu-system-x86_64",
+          "-accel",
+          "tcg",
+          "-display",
+          "none",
+          "-monitor",
+          "none",
+          "-no-reboot",
+          "-serial",
+          "file:/home/alive/grub-next/build/phase4/bios-corrupt-content.serial.log",
+          "-m",
+          "512M",
+          "-cpu",
+          "qemu32,+pae,-lm",
+          "-kernel",
+          "/home/alive/grub-next/build/phase4/i386-pc/boot-linux.bz",
+          "-initrd",
+          "/home/alive/grub-next/build/phase4/bad-content.cpio",
+          "-debugcon",
+          "file:/home/alive/grub-next/build/phase4/bios-corrupt-content.debug.log"
+        ],
+        "exit_code": 0,
+        "markers": [
+          "BOOT:PANIC:resource-open"
+        ]
+      },
+      "bios-corrupt-header": {
+        "command": [
+          "qemu-system-x86_64",
+          "-accel",
+          "tcg",
+          "-display",
+          "none",
+          "-monitor",
+          "none",
+          "-no-reboot",
+          "-serial",
+          "file:/home/alive/grub-next/build/phase4/bios-corrupt-header.serial.log",
+          "-m",
+          "512M",
+          "-cpu",
+          "qemu32,+pae,-lm",
+          "-kernel",
+          "/home/alive/grub-next/build/phase4/i386-pc/boot-linux.bz",
+          "-initrd",
+          "/home/alive/grub-next/build/phase4/bad-header.cpio",
+          "-debugcon",
+          "file:/home/alive/grub-next/build/phase4/bios-corrupt-header.debug.log"
+        ],
+        "exit_code": 0,
+        "markers": [
+          "BOOT:PANIC:resource-open"
+        ]
+      },
+      "bios-diskless-embedded": {
+        "command": [
+          "qemu-system-x86_64",
+          "-accel",
+          "tcg",
+          "-display",
+          "none",
+          "-monitor",
+          "none",
+          "-no-reboot",
+          "-serial",
+          "file:/home/alive/grub-next/build/phase4/bios-diskless-embedded.serial.log",
+          "-m",
+          "512M",
+          "-cpu",
+          "qemu32,+pae,-lm",
+          "-kernel",
+          "/home/alive/grub-next/build/phase4/i386-pc/boot-linux.bz",
+          "-debugcon",
+          "file:/home/alive/grub-next/build/phase4/bios-diskless-embedded.debug.log"
+        ],
+        "exit_code": 0,
+        "markers": [
+          "BOOT:PASS:firmware-time",
+          "BOOT:PASS:loader-abort-commit",
+          "BOOT:PASS:memory-owners",
+          "BOOT:PASS:memory-log",
+          "BOOT:PANIC:phase1-reset",
+          "BOOT:PASS:storage-ready",
+          "BOOT:PASS:storage-rescan-stale",
+          "BOOT:PASS:resource-manifest",
+          "BOOT:PASS:resource-config-font",
+          "BOOT:PASS:module-sdk-execution",
+          "BOOT:PASS:module-duplicate-rollback-freeze",
+          "BOOT:PASS:module-api-call",
+          "BOOT:PASS:resource-embedded"
+        ]
+      },
+      "bios-linux": {
+        "command": [
+          "qemu-system-x86_64",
+          "-accel",
+          "tcg",
+          "-display",
+          "none",
+          "-monitor",
+          "none",
+          "-no-reboot",
+          "-serial",
+          "file:/home/alive/grub-next/build/phase4/bios-linux.serial.log",
+          "-m",
+          "6G",
+          "-cpu",
+          "qemu32,+pae,-lm",
+          "-cdrom",
+          "/home/alive/grub-next/build/phase4/linux.iso",
+          "-boot",
+          "d",
+          "-debugcon",
+          "file:/home/alive/grub-next/build/phase4/bios-linux.debug.log"
+        ],
+        "exit_code": 0,
+        "markers": [
+          "BOOT:PASS:firmware-time",
+          "BOOT:PASS:loader-abort-commit",
+          "BOOT:PASS:memory-owners",
+          "BOOT:PASS:memory-log",
+          "BOOT:PANIC:phase1-reset",
+          "BOOT:PASS:storage-ready",
+          "BOOT:PASS:storage-rescan-stale",
+          "BOOT:PASS:resource-manifest",
+          "BOOT:PASS:resource-config-font",
+          "BOOT:PASS:module-sdk-execution",
+          "BOOT:PASS:module-duplicate-rollback-freeze",
+          "BOOT:PASS:module-api-call",
+          "BOOT:PASS:context:linux",
+          "BOOT:PASS:high-pae-copy-hash-fp",
+          "BOOT:PASS:resident-int15-e820",
+          "BOOT:PASS:resource-linux-initrd"
+        ]
+      },
+      "bios-linux-real": {
+        "command": [
+          "qemu-system-x86_64",
+          "-accel",
+          "tcg",
+          "-display",
+          "none",
+          "-monitor",
+          "none",
+          "-no-reboot",
+          "-serial",
+          "file:/home/alive/grub-next/build/phase4/bios-linux-real.serial.log",
+          "-m",
+          "6G",
+          "-cpu",
+          "qemu32,+pae,-lm",
+          "-kernel",
+          "/home/alive/grub-next/build/phase4/i386-pc/boot-linux.bz",
+          "-initrd",
+          "/home/alive/grub-next/build/phase4/i386-pc/resource.cpio",
+          "-debugcon",
+          "file:/home/alive/grub-next/build/phase4/bios-linux-real.debug.log"
+        ],
+        "exit_code": 0,
+        "markers": [
+          "BOOT:PASS:firmware-time",
+          "BOOT:PASS:loader-abort-commit",
+          "BOOT:PASS:memory-owners",
+          "BOOT:PASS:memory-log",
+          "BOOT:PANIC:phase1-reset",
+          "BOOT:PASS:storage-ready",
+          "BOOT:PASS:storage-rescan-stale",
+          "BOOT:PASS:resource-manifest",
+          "BOOT:PASS:resource-config-font",
+          "BOOT:PASS:module-sdk-execution",
+          "BOOT:PASS:module-duplicate-rollback-freeze",
+          "BOOT:PASS:module-api-call",
+          "BOOT:PASS:context:linux",
+          "BOOT:PASS:high-pae-copy-hash-fp",
+          "BOOT:PASS:resident-int15-e820",
+          "BOOT:PASS:resource-linux-initrd"
+        ]
+      },
+      "bios-low-ram": {
+        "command": [
+          "qemu-system-x86_64",
+          "-accel",
+          "tcg",
+          "-display",
+          "none",
+          "-monitor",
+          "none",
+          "-no-reboot",
+          "-serial",
+          "file:/home/alive/grub-next/build/phase4/bios-low-ram.serial.log",
+          "-m",
+          "128M",
+          "-cpu",
+          "qemu32",
+          "-cdrom",
+          "/home/alive/grub-next/build/phase4/mb.iso",
+          "-boot",
+          "d",
+          "-debugcon",
+          "file:/home/alive/grub-next/build/phase4/bios-low-ram.debug.log"
+        ],
+        "exit_code": 0,
+        "markers": [
+          "BOOT:PASS:firmware-time",
+          "BOOT:PASS:loader-abort-commit",
+          "BOOT:PASS:memory-owners",
+          "BOOT:PASS:memory-log",
+          "BOOT:PANIC:phase1-reset",
+          "BOOT:PASS:storage-ready",
+          "BOOT:PASS:storage-rescan-stale",
+          "BOOT:PASS:resource-manifest",
+          "BOOT:PASS:resource-config-font",
+          "BOOT:PASS:module-sdk-execution",
+          "BOOT:PASS:module-duplicate-rollback-freeze",
+          "BOOT:PASS:module-api-call",
+          "BOOT:PASS:context:multiboot2",
+          "BOOT:PASS:no-high-ram",
+          "BOOT:PASS:resident-int15-e820",
+          "BOOT:PASS:resource-multiboot2"
+        ]
+      },
+      "bios-no-pae": {
+        "command": [
+          "qemu-system-x86_64",
+          "-accel",
+          "tcg",
+          "-display",
+          "none",
+          "-monitor",
+          "none",
+          "-no-reboot",
+          "-serial",
+          "file:/home/alive/grub-next/build/phase4/bios-no-pae.serial.log",
+          "-m",
+          "512M",
+          "-cpu",
+          "qemu32,-pae,-lm",
+          "-cdrom",
+          "/home/alive/grub-next/build/phase4/mb.iso",
+          "-boot",
+          "d",
+          "-debugcon",
+          "file:/home/alive/grub-next/build/phase4/bios-no-pae.debug.log"
+        ],
+        "exit_code": 0,
+        "markers": [
+          "BOOT:PASS:firmware-time",
+          "BOOT:PASS:loader-abort-commit",
+          "BOOT:PASS:memory-owners",
+          "BOOT:PASS:memory-log",
+          "BOOT:PANIC:phase1-reset",
+          "BOOT:PASS:storage-ready",
+          "BOOT:PASS:storage-rescan-stale",
+          "BOOT:PASS:resource-manifest",
+          "BOOT:PASS:resource-config-font",
+          "BOOT:PASS:module-sdk-execution",
+          "BOOT:PASS:module-duplicate-rollback-freeze",
+          "BOOT:PASS:module-api-call",
+          "BOOT:PASS:context:multiboot2",
+          "BOOT:PASS:low-copy-hash-fp",
+          "BOOT:PASS:resident-int15-e820",
+          "BOOT:PASS:resource-multiboot2"
+        ]
+      },
+      "bios-pae-no-lm": {
+        "command": [
+          "qemu-system-x86_64",
+          "-accel",
+          "tcg",
+          "-display",
+          "none",
+          "-monitor",
+          "none",
+          "-no-reboot",
+          "-serial",
+          "file:/home/alive/grub-next/build/phase4/bios-pae-no-lm.serial.log",
+          "-m",
+          "6G",
+          "-cpu",
+          "qemu32,+pae,-lm",
+          "-cdrom",
+          "/home/alive/grub-next/build/phase4/mb.iso",
+          "-boot",
+          "d",
+          "-debugcon",
+          "file:/home/alive/grub-next/build/phase4/bios-pae-no-lm.debug.log"
+        ],
+        "exit_code": 0,
+        "markers": [
+          "BOOT:PASS:firmware-time",
+          "BOOT:PASS:loader-abort-commit",
+          "BOOT:PASS:memory-owners",
+          "BOOT:PASS:memory-log",
+          "BOOT:PANIC:phase1-reset",
+          "BOOT:PASS:storage-ready",
+          "BOOT:PASS:storage-rescan-stale",
+          "BOOT:PASS:resource-manifest",
+          "BOOT:PASS:resource-config-font",
+          "BOOT:PASS:module-sdk-execution",
+          "BOOT:PASS:module-duplicate-rollback-freeze",
+          "BOOT:PASS:module-api-call",
+          "BOOT:PASS:context:multiboot2",
+          "BOOT:PASS:high-pae-copy-hash-fp",
+          "BOOT:PASS:resident-int15-e820",
+          "BOOT:PASS:resource-multiboot2"
+        ]
+      },
+      "i386-efi": {
+        "command": [
+          "qemu-system-x86_64",
+          "-accel",
+          "tcg",
+          "-display",
+          "none",
+          "-monitor",
+          "none",
+          "-no-reboot",
+          "-serial",
+          "file:/home/alive/grub-next/build/phase4/i386-efi.serial.log",
+          "-m",
+          "256M",
+          "-drive",
+          "if=pflash,format=raw,readonly=on,file=/usr/share/OVMF/OVMF32_CODE_4M.fd",
+          "-drive",
+          "if=pflash,format=raw,file=/home/alive/grub-next/build/phase4/i386-efi-vars.fd",
+          "-drive",
+          "if=none,id=esp,format=raw,file=fat:rw:/home/alive/grub-next/build/phase4/esp-i386-efi",
+          "-device",
+          "virtio-blk-pci,drive=esp",
+          "-debugcon",
+          "file:/home/alive/grub-next/build/phase4/i386-efi.debug.log"
+        ],
+        "exit_code": 0,
+        "markers": [
+          "BOOT:PASS:firmware-time",
+          "BOOT:PASS:loader-abort-commit",
+          "BOOT:PASS:memory-owners",
+          "BOOT:PASS:memory-log",
+          "BOOT:PANIC:phase1-reset",
+          "BOOT:PASS:storage-ready",
+          "BOOT:PASS:storage-rescan-stale",
+          "BOOT:PASS:resource-manifest",
+          "BOOT:PASS:resource-config-font",
+          "BOOT:PASS:module-sdk-execution",
+          "BOOT:PASS:module-duplicate-rollback-freeze",
+          "BOOT:PASS:module-api-call",
+          "BOOT:PASS:efi-context:i386-efi",
+          "BOOT:PASS:fp-state",
+          "BOOT:PASS:efi-bs-rt-loader-types",
+          "BOOT:PASS:efi-firmware-reservations"
+        ]
+      },
+      "loongarch64-efi": {
+        "command": [
+          "/home/alive/grub-next/build/qemu-9.2.2/build/qemu-system-loongarch64",
+          "-accel",
+          "tcg",
+          "-display",
+          "none",
+          "-monitor",
+          "none",
+          "-no-reboot",
+          "-serial",
+          "file:/home/alive/grub-next/build/phase4/loongarch64-efi.serial.log",
+          "-M",
+          "virt",
+          "-m",
+          "2G",
+          "-bios",
+          "/home/alive/grub-next/build/firmware/loongarch.fd",
+          "-drive",
+          "if=none,id=esp,format=raw,file=fat:rw:/home/alive/grub-next/build/phase4/esp-loongarch64-efi",
+          "-device",
+          "virtio-blk-pci,drive=esp"
+        ],
+        "exit_code": 0,
+        "markers": [
+          "BOOT:PASS:firmware-time",
+          "BOOT:PASS:loader-abort-commit",
+          "BOOT:PASS:memory-owners",
+          "BOOT:PASS:memory-log",
+          "BOOT:PANIC:phase1-reset",
+          "BOOT:PASS:storage-ready",
+          "BOOT:PASS:storage-rescan-stale",
+          "BOOT:PASS:resource-manifest",
+          "BOOT:PASS:resource-config-font",
+          "BOOT:PASS:module-sdk-execution",
+          "BOOT:PASS:module-duplicate-rollback-freeze",
+          "BOOT:PASS:module-api-call",
+          "BOOT:PASS:efi-context:loongarch64-efi",
+          "BOOT:PASS:fp-state",
+          "BOOT:PASS:efi-bs-rt-loader-types",
+          "BOOT:PASS:efi-firmware-reservations"
+        ]
+      },
+      "storage-arm64-efi": {
+        "command": [
+          "qemu-system-aarch64",
+          "-accel",
+          "tcg",
+          "-display",
+          "none",
+          "-monitor",
+          "none",
+          "-no-reboot",
+          "-serial",
+          "file:/home/alive/grub-next/build/phase4/storage-arm64-efi.serial.log",
+          "-M",
+          "virt",
+          "-cpu",
+          "cortex-a57",
+          "-m",
+          "512M",
+          "-drive",
+          "if=pflash,format=raw,readonly=on,file=/usr/share/AAVMF/AAVMF_CODE.fd",
+          "-drive",
+          "if=pflash,format=raw,file=/home/alive/grub-next/build/phase4/arm64-efi-vars.fd",
+          "-drive",
+          "if=none,id=esp,format=raw,file=fat:rw:/home/alive/grub-next/build/phase4/esp-arm64-efi",
+          "-device",
+          "virtio-blk-pci,drive=esp",
+          "-drive",
+          "if=none,id=fixture0,format=raw,readonly=on,file=/home/alive/grub-next/build/phase4/fixtures/gpt4096.img",
+          "-device",
+          "virtio-blk-pci,drive=fixture0,logical_block_size=4096,physical_block_size=4096",
+          "-drive",
+          "if=none,id=fixture1,format=raw,readonly=on,file=/home/alive/grub-next/build/phase4/fixtures/ext2.img",
+          "-device",
+          "virtio-blk-pci,drive=fixture1",
+          "-drive",
+          "if=none,id=fixture2,format=raw,readonly=on,file=/home/alive/grub-next/build/phase4/fixtures/ext3.img",
+          "-device",
+          "virtio-blk-pci,drive=fixture2",
+          "-drive",
+          "if=none,id=fixture3,format=raw,readonly=on,file=/home/alive/grub-next/build/phase4/fixtures/ext4.img",
+          "-device",
+          "virtio-blk-pci,drive=fixture3",
+          "-drive",
+          "if=none,id=fixture4,format=raw,readonly=on,file=/home/alive/grub-next/build/phase4/fixtures/ntfs.img",
+          "-device",
+          "virtio-blk-pci,drive=fixture4",
+          "-drive",
+          "if=none,id=fixture5,format=raw,readonly=on,file=/home/alive/grub-next/build/phase4/fixtures/iso.img",
+          "-device",
+          "virtio-blk-pci,drive=fixture5,logical_block_size=2048,physical_block_size=2048"
+        ],
+        "exit_code": 0,
+        "markers": [
+          "BOOT:PASS:firmware-time",
+          "BOOT:PASS:loader-abort-commit",
+          "BOOT:PASS:memory-owners",
+          "BOOT:PASS:memory-log",
+          "BOOT:PANIC:phase1-reset",
+          "BOOT:PASS:storage-ready",
+          "BOOT:PASS:storage-rescan-stale",
+          "BOOT:PASS:resource-manifest",
+          "BOOT:PASS:resource-config-font",
+          "BOOT:PASS:module-sdk-execution",
+          "BOOT:PASS:module-duplicate-rollback-freeze",
+          "BOOT:PASS:module-api-call",
+          "BOOT:PASS:storage-fat",
+          "BOOT:PASS:storage-ext",
+          "BOOT:PASS:storage-ntfs",
+          "BOOT:PASS:storage-iso9660"
+        ]
+      },
+      "storage-bios-ebr512": {
+        "command": [
+          "qemu-system-x86_64",
+          "-accel",
+          "tcg",
+          "-display",
+          "none",
+          "-monitor",
+          "none",
+          "-no-reboot",
+          "-serial",
+          "file:/home/alive/grub-next/build/phase4/storage-bios-ebr512.serial.log",
+          "-m",
+          "512M",
+          "-cpu",
+          "qemu32,+pae,-lm",
+          "-kernel",
+          "/home/alive/grub-next/build/phase4/i386-pc/boot-linux.bz",
+          "-drive",
+          "format=raw,file=/home/alive/grub-next/build/phase4/fixtures/ebr512.img",
+          "-debugcon",
+          "file:/home/alive/grub-next/build/phase4/storage-bios-ebr512.debug.log"
+        ],
+        "exit_code": 0,
+        "markers": [
+          "BOOT:PASS:firmware-time",
+          "BOOT:PASS:loader-abort-commit",
+          "BOOT:PASS:memory-owners",
+          "BOOT:PASS:memory-log",
+          "BOOT:PANIC:phase1-reset",
+          "BOOT:PASS:storage-ready",
+          "BOOT:PASS:storage-rescan-stale",
+          "BOOT:PASS:resource-manifest",
+          "BOOT:PASS:resource-config-font",
+          "BOOT:PASS:module-sdk-execution",
+          "BOOT:PASS:module-duplicate-rollback-freeze",
+          "BOOT:PASS:module-api-call",
+          "BOOT:PASS:storage-fat"
+        ]
+      },
+      "storage-bios-ext2": {
+        "command": [
+          "qemu-system-x86_64",
+          "-accel",
+          "tcg",
+          "-display",
+          "none",
+          "-monitor",
+          "none",
+          "-no-reboot",
+          "-serial",
+          "file:/home/alive/grub-next/build/phase4/storage-bios-ext2.serial.log",
+          "-m",
+          "512M",
+          "-cpu",
+          "qemu32,+pae,-lm",
+          "-kernel",
+          "/home/alive/grub-next/build/phase4/i386-pc/boot-linux.bz",
+          "-drive",
+          "format=raw,file=/home/alive/grub-next/build/phase4/fixtures/ext2.img",
+          "-debugcon",
+          "file:/home/alive/grub-next/build/phase4/storage-bios-ext2.debug.log"
+        ],
+        "exit_code": 0,
+        "markers": [
+          "BOOT:PASS:firmware-time",
+          "BOOT:PASS:loader-abort-commit",
+          "BOOT:PASS:memory-owners",
+          "BOOT:PASS:memory-log",
+          "BOOT:PANIC:phase1-reset",
+          "BOOT:PASS:storage-ready",
+          "BOOT:PASS:storage-rescan-stale",
+          "BOOT:PASS:resource-manifest",
+          "BOOT:PASS:resource-config-font",
+          "BOOT:PASS:module-sdk-execution",
+          "BOOT:PASS:module-duplicate-rollback-freeze",
+          "BOOT:PASS:module-api-call",
+          "BOOT:PASS:storage-ext"
+        ]
+      },
+      "storage-bios-ext3": {
+        "command": [
+          "qemu-system-x86_64",
+          "-accel",
+          "tcg",
+          "-display",
+          "none",
+          "-monitor",
+          "none",
+          "-no-reboot",
+          "-serial",
+          "file:/home/alive/grub-next/build/phase4/storage-bios-ext3.serial.log",
+          "-m",
+          "512M",
+          "-cpu",
+          "qemu32,+pae,-lm",
+          "-kernel",
+          "/home/alive/grub-next/build/phase4/i386-pc/boot-linux.bz",
+          "-drive",
+          "format=raw,file=/home/alive/grub-next/build/phase4/fixtures/ext3.img",
+          "-debugcon",
+          "file:/home/alive/grub-next/build/phase4/storage-bios-ext3.debug.log"
+        ],
+        "exit_code": 0,
+        "markers": [
+          "BOOT:PASS:firmware-time",
+          "BOOT:PASS:loader-abort-commit",
+          "BOOT:PASS:memory-owners",
+          "BOOT:PASS:memory-log",
+          "BOOT:PANIC:phase1-reset",
+          "BOOT:PASS:storage-ready",
+          "BOOT:PASS:storage-rescan-stale",
+          "BOOT:PASS:resource-manifest",
+          "BOOT:PASS:resource-config-font",
+          "BOOT:PASS:module-sdk-execution",
+          "BOOT:PASS:module-duplicate-rollback-freeze",
+          "BOOT:PASS:module-api-call",
+          "BOOT:PASS:storage-ext"
+        ]
+      },
+      "storage-bios-ext4": {
+        "command": [
+          "qemu-system-x86_64",
+          "-accel",
+          "tcg",
+          "-display",
+          "none",
+          "-monitor",
+          "none",
+          "-no-reboot",
+          "-serial",
+          "file:/home/alive/grub-next/build/phase4/storage-bios-ext4.serial.log",
+          "-m",
+          "512M",
+          "-cpu",
+          "qemu32,+pae,-lm",
+          "-kernel",
+          "/home/alive/grub-next/build/phase4/i386-pc/boot-linux.bz",
+          "-drive",
+          "format=raw,file=/home/alive/grub-next/build/phase4/fixtures/ext4.img",
+          "-debugcon",
+          "file:/home/alive/grub-next/build/phase4/storage-bios-ext4.debug.log"
+        ],
+        "exit_code": 0,
+        "markers": [
+          "BOOT:PASS:firmware-time",
+          "BOOT:PASS:loader-abort-commit",
+          "BOOT:PASS:memory-owners",
+          "BOOT:PASS:memory-log",
+          "BOOT:PANIC:phase1-reset",
+          "BOOT:PASS:storage-ready",
+          "BOOT:PASS:storage-rescan-stale",
+          "BOOT:PASS:resource-manifest",
+          "BOOT:PASS:resource-config-font",
+          "BOOT:PASS:module-sdk-execution",
+          "BOOT:PASS:module-duplicate-rollback-freeze",
+          "BOOT:PASS:module-api-call",
+          "BOOT:PASS:storage-ext"
+        ]
+      },
+      "storage-bios-fat12": {
+        "command": [
+          "qemu-system-x86_64",
+          "-accel",
+          "tcg",
+          "-display",
+          "none",
+          "-monitor",
+          "none",
+          "-no-reboot",
+          "-serial",
+          "file:/home/alive/grub-next/build/phase4/storage-bios-fat12.serial.log",
+          "-m",
+          "512M",
+          "-cpu",
+          "qemu32,+pae,-lm",
+          "-kernel",
+          "/home/alive/grub-next/build/phase4/i386-pc/boot-linux.bz",
+          "-drive",
+          "if=floppy,format=raw,file=/home/alive/grub-next/build/phase4/fixtures/fat12.img",
+          "-debugcon",
+          "file:/home/alive/grub-next/build/phase4/storage-bios-fat12.debug.log"
+        ],
+        "exit_code": 0,
+        "markers": [
+          "BOOT:PASS:firmware-time",
+          "BOOT:PASS:loader-abort-commit",
+          "BOOT:PASS:memory-owners",
+          "BOOT:PASS:memory-log",
+          "BOOT:PANIC:phase1-reset",
+          "BOOT:PASS:storage-ready",
+          "BOOT:PASS:storage-rescan-stale",
+          "BOOT:PASS:resource-manifest",
+          "BOOT:PASS:resource-config-font",
+          "BOOT:PASS:module-sdk-execution",
+          "BOOT:PASS:module-duplicate-rollback-freeze",
+          "BOOT:PASS:module-api-call",
+          "BOOT:PASS:storage-fat"
+        ]
+      },
+      "storage-bios-fat16": {
+        "command": [
+          "qemu-system-x86_64",
+          "-accel",
+          "tcg",
+          "-display",
+          "none",
+          "-monitor",
+          "none",
+          "-no-reboot",
+          "-serial",
+          "file:/home/alive/grub-next/build/phase4/storage-bios-fat16.serial.log",
+          "-m",
+          "512M",
+          "-cpu",
+          "qemu32,+pae,-lm",
+          "-kernel",
+          "/home/alive/grub-next/build/phase4/i386-pc/boot-linux.bz",
+          "-drive",
+          "format=raw,file=/home/alive/grub-next/build/phase4/fixtures/fat16.img",
+          "-debugcon",
+          "file:/home/alive/grub-next/build/phase4/storage-bios-fat16.debug.log"
+        ],
+        "exit_code": 0,
+        "markers": [
+          "BOOT:PASS:firmware-time",
+          "BOOT:PASS:loader-abort-commit",
+          "BOOT:PASS:memory-owners",
+          "BOOT:PASS:memory-log",
+          "BOOT:PANIC:phase1-reset",
+          "BOOT:PASS:storage-ready",
+          "BOOT:PASS:storage-rescan-stale",
+          "BOOT:PASS:resource-manifest",
+          "BOOT:PASS:resource-config-font",
+          "BOOT:PASS:module-sdk-execution",
+          "BOOT:PASS:module-duplicate-rollback-freeze",
+          "BOOT:PASS:module-api-call",
+          "BOOT:PASS:storage-fat"
+        ]
+      },
+      "storage-bios-fat32": {
+        "command": [
+          "qemu-system-x86_64",
+          "-accel",
+          "tcg",
+          "-display",
+          "none",
+          "-monitor",
+          "none",
+          "-no-reboot",
+          "-serial",
+          "file:/home/alive/grub-next/build/phase4/storage-bios-fat32.serial.log",
+          "-m",
+          "512M",
+          "-cpu",
+          "qemu32,+pae,-lm",
+          "-kernel",
+          "/home/alive/grub-next/build/phase4/i386-pc/boot-linux.bz",
+          "-drive",
+          "format=raw,file=/home/alive/grub-next/build/phase4/fixtures/fat32.img",
+          "-debugcon",
+          "file:/home/alive/grub-next/build/phase4/storage-bios-fat32.debug.log"
+        ],
+        "exit_code": 0,
+        "markers": [
+          "BOOT:PASS:firmware-time",
+          "BOOT:PASS:loader-abort-commit",
+          "BOOT:PASS:memory-owners",
+          "BOOT:PASS:memory-log",
+          "BOOT:PANIC:phase1-reset",
+          "BOOT:PASS:storage-ready",
+          "BOOT:PASS:storage-rescan-stale",
+          "BOOT:PASS:resource-manifest",
+          "BOOT:PASS:resource-config-font",
+          "BOOT:PASS:module-sdk-execution",
+          "BOOT:PASS:module-duplicate-rollback-freeze",
+          "BOOT:PASS:module-api-call",
+          "BOOT:PASS:storage-fat"
+        ]
+      },
+      "storage-bios-gpt512": {
+        "command": [
+          "qemu-system-x86_64",
+          "-accel",
+          "tcg",
+          "-display",
+          "none",
+          "-monitor",
+          "none",
+          "-no-reboot",
+          "-serial",
+          "file:/home/alive/grub-next/build/phase4/storage-bios-gpt512.serial.log",
+          "-m",
+          "512M",
+          "-cpu",
+          "qemu32,+pae,-lm",
+          "-kernel",
+          "/home/alive/grub-next/build/phase4/i386-pc/boot-linux.bz",
+          "-drive",
+          "format=raw,file=/home/alive/grub-next/build/phase4/fixtures/gpt512.img",
+          "-debugcon",
+          "file:/home/alive/grub-next/build/phase4/storage-bios-gpt512.debug.log"
+        ],
+        "exit_code": 0,
+        "markers": [
+          "BOOT:PASS:firmware-time",
+          "BOOT:PASS:loader-abort-commit",
+          "BOOT:PASS:memory-owners",
+          "BOOT:PASS:memory-log",
+          "BOOT:PANIC:phase1-reset",
+          "BOOT:PASS:storage-ready",
+          "BOOT:PASS:storage-rescan-stale",
+          "BOOT:PASS:resource-manifest",
+          "BOOT:PASS:resource-config-font",
+          "BOOT:PASS:module-sdk-execution",
+          "BOOT:PASS:module-duplicate-rollback-freeze",
+          "BOOT:PASS:module-api-call",
+          "BOOT:PASS:storage-fat"
+        ]
+      },
+      "storage-bios-iso": {
+        "command": [
+          "qemu-system-x86_64",
+          "-accel",
+          "tcg",
+          "-display",
+          "none",
+          "-monitor",
+          "none",
+          "-no-reboot",
+          "-serial",
+          "file:/home/alive/grub-next/build/phase4/storage-bios-iso.serial.log",
+          "-m",
+          "512M",
+          "-cpu",
+          "qemu32,+pae,-lm",
+          "-kernel",
+          "/home/alive/grub-next/build/phase4/i386-pc/boot-linux.bz",
+          "-cdrom",
+          "/home/alive/grub-next/build/phase4/fixtures/iso.img",
+          "-debugcon",
+          "file:/home/alive/grub-next/build/phase4/storage-bios-iso.debug.log"
+        ],
+        "exit_code": 0,
+        "markers": [
+          "BOOT:PASS:firmware-time",
+          "BOOT:PASS:loader-abort-commit",
+          "BOOT:PASS:memory-owners",
+          "BOOT:PASS:memory-log",
+          "BOOT:PANIC:phase1-reset",
+          "BOOT:PASS:storage-ready",
+          "BOOT:PASS:storage-rescan-stale",
+          "BOOT:PASS:resource-manifest",
+          "BOOT:PASS:resource-config-font",
+          "BOOT:PASS:module-sdk-execution",
+          "BOOT:PASS:module-duplicate-rollback-freeze",
+          "BOOT:PASS:module-api-call",
+          "BOOT:PASS:storage-iso9660"
+        ]
+      },
+      "storage-bios-mbr512": {
+        "command": [
+          "qemu-system-x86_64",
+          "-accel",
+          "tcg",
+          "-display",
+          "none",
+          "-monitor",
+          "none",
+          "-no-reboot",
+          "-serial",
+          "file:/home/alive/grub-next/build/phase4/storage-bios-mbr512.serial.log",
+          "-m",
+          "512M",
+          "-cpu",
+          "qemu32,+pae,-lm",
+          "-kernel",
+          "/home/alive/grub-next/build/phase4/i386-pc/boot-linux.bz",
+          "-drive",
+          "format=raw,file=/home/alive/grub-next/build/phase4/fixtures/mbr512.img",
+          "-debugcon",
+          "file:/home/alive/grub-next/build/phase4/storage-bios-mbr512.debug.log"
+        ],
+        "exit_code": 0,
+        "markers": [
+          "BOOT:PASS:firmware-time",
+          "BOOT:PASS:loader-abort-commit",
+          "BOOT:PASS:memory-owners",
+          "BOOT:PASS:memory-log",
+          "BOOT:PANIC:phase1-reset",
+          "BOOT:PASS:storage-ready",
+          "BOOT:PASS:storage-rescan-stale",
+          "BOOT:PASS:resource-manifest",
+          "BOOT:PASS:resource-config-font",
+          "BOOT:PASS:module-sdk-execution",
+          "BOOT:PASS:module-duplicate-rollback-freeze",
+          "BOOT:PASS:module-api-call",
+          "BOOT:PASS:storage-fat"
+        ]
+      },
+      "storage-bios-ntfs": {
+        "command": [
+          "qemu-system-x86_64",
+          "-accel",
+          "tcg",
+          "-display",
+          "none",
+          "-monitor",
+          "none",
+          "-no-reboot",
+          "-serial",
+          "file:/home/alive/grub-next/build/phase4/storage-bios-ntfs.serial.log",
+          "-m",
+          "512M",
+          "-cpu",
+          "qemu32,+pae,-lm",
+          "-kernel",
+          "/home/alive/grub-next/build/phase4/i386-pc/boot-linux.bz",
+          "-drive",
+          "format=raw,file=/home/alive/grub-next/build/phase4/fixtures/ntfs.img",
+          "-debugcon",
+          "file:/home/alive/grub-next/build/phase4/storage-bios-ntfs.debug.log"
+        ],
+        "exit_code": 0,
+        "markers": [
+          "BOOT:PASS:firmware-time",
+          "BOOT:PASS:loader-abort-commit",
+          "BOOT:PASS:memory-owners",
+          "BOOT:PASS:memory-log",
+          "BOOT:PANIC:phase1-reset",
+          "BOOT:PASS:storage-ready",
+          "BOOT:PASS:storage-rescan-stale",
+          "BOOT:PASS:resource-manifest",
+          "BOOT:PASS:resource-config-font",
+          "BOOT:PASS:module-sdk-execution",
+          "BOOT:PASS:module-duplicate-rollback-freeze",
+          "BOOT:PASS:module-api-call",
+          "BOOT:PASS:storage-ntfs"
+        ]
+      },
+      "storage-i386-efi": {
+        "command": [
+          "qemu-system-x86_64",
+          "-accel",
+          "tcg",
+          "-display",
+          "none",
+          "-monitor",
+          "none",
+          "-no-reboot",
+          "-serial",
+          "file:/home/alive/grub-next/build/phase4/storage-i386-efi.serial.log",
+          "-m",
+          "256M",
+          "-drive",
+          "if=pflash,format=raw,readonly=on,file=/usr/share/OVMF/OVMF32_CODE_4M.fd",
+          "-drive",
+          "if=pflash,format=raw,file=/home/alive/grub-next/build/phase4/i386-efi-vars.fd",
+          "-drive",
+          "if=none,id=esp,format=raw,file=fat:rw:/home/alive/grub-next/build/phase4/esp-i386-efi",
+          "-device",
+          "virtio-blk-pci,drive=esp",
+          "-drive",
+          "if=none,id=fixture0,format=raw,readonly=on,file=/home/alive/grub-next/build/phase4/fixtures/gpt4096.img",
+          "-device",
+          "virtio-blk-pci,drive=fixture0,logical_block_size=4096,physical_block_size=4096",
+          "-drive",
+          "if=none,id=fixture1,format=raw,readonly=on,file=/home/alive/grub-next/build/phase4/fixtures/ext2.img",
+          "-device",
+          "virtio-blk-pci,drive=fixture1",
+          "-drive",
+          "if=none,id=fixture2,format=raw,readonly=on,file=/home/alive/grub-next/build/phase4/fixtures/ext3.img",
+          "-device",
+          "virtio-blk-pci,drive=fixture2",
+          "-drive",
+          "if=none,id=fixture3,format=raw,readonly=on,file=/home/alive/grub-next/build/phase4/fixtures/ext4.img",
+          "-device",
+          "virtio-blk-pci,drive=fixture3",
+          "-drive",
+          "if=none,id=fixture4,format=raw,readonly=on,file=/home/alive/grub-next/build/phase4/fixtures/ntfs.img",
+          "-device",
+          "virtio-blk-pci,drive=fixture4",
+          "-drive",
+          "if=none,id=fixture5,format=raw,readonly=on,file=/home/alive/grub-next/build/phase4/fixtures/iso.img",
+          "-device",
+          "virtio-blk-pci,drive=fixture5,logical_block_size=2048,physical_block_size=2048",
+          "-debugcon",
+          "file:/home/alive/grub-next/build/phase4/storage-i386-efi.debug.log"
+        ],
+        "exit_code": 0,
+        "markers": [
+          "BOOT:PASS:firmware-time",
+          "BOOT:PASS:loader-abort-commit",
+          "BOOT:PASS:memory-owners",
+          "BOOT:PASS:memory-log",
+          "BOOT:PANIC:phase1-reset",
+          "BOOT:PASS:storage-ready",
+          "BOOT:PASS:storage-rescan-stale",
+          "BOOT:PASS:resource-manifest",
+          "BOOT:PASS:resource-config-font",
+          "BOOT:PASS:module-sdk-execution",
+          "BOOT:PASS:module-duplicate-rollback-freeze",
+          "BOOT:PASS:module-api-call",
+          "BOOT:PASS:storage-fat",
+          "BOOT:PASS:storage-ext",
+          "BOOT:PASS:storage-ntfs",
+          "BOOT:PASS:storage-iso9660"
+        ]
+      },
+      "storage-loongarch64-efi": {
+        "command": [
+          "/home/alive/grub-next/build/qemu-9.2.2/build/qemu-system-loongarch64",
+          "-accel",
+          "tcg",
+          "-display",
+          "none",
+          "-monitor",
+          "none",
+          "-no-reboot",
+          "-serial",
+          "file:/home/alive/grub-next/build/phase4/storage-loongarch64-efi.serial.log",
+          "-M",
+          "virt",
+          "-m",
+          "2G",
+          "-bios",
+          "/home/alive/grub-next/build/firmware/loongarch.fd",
+          "-drive",
+          "if=none,id=esp,format=raw,file=fat:rw:/home/alive/grub-next/build/phase4/esp-loongarch64-efi",
+          "-device",
+          "virtio-blk-pci,drive=esp",
+          "-drive",
+          "if=none,id=fixture0,format=raw,readonly=on,file=/home/alive/grub-next/build/phase4/fixtures/gpt4096.img",
+          "-device",
+          "virtio-blk-pci,drive=fixture0,logical_block_size=4096,physical_block_size=4096",
+          "-drive",
+          "if=none,id=fixture1,format=raw,readonly=on,file=/home/alive/grub-next/build/phase4/fixtures/ext2.img",
+          "-device",
+          "virtio-blk-pci,drive=fixture1",
+          "-drive",
+          "if=none,id=fixture2,format=raw,readonly=on,file=/home/alive/grub-next/build/phase4/fixtures/ext3.img",
+          "-device",
+          "virtio-blk-pci,drive=fixture2",
+          "-drive",
+          "if=none,id=fixture3,format=raw,readonly=on,file=/home/alive/grub-next/build/phase4/fixtures/ext4.img",
+          "-device",
+          "virtio-blk-pci,drive=fixture3",
+          "-drive",
+          "if=none,id=fixture4,format=raw,readonly=on,file=/home/alive/grub-next/build/phase4/fixtures/ntfs.img",
+          "-device",
+          "virtio-blk-pci,drive=fixture4",
+          "-drive",
+          "if=none,id=fixture5,format=raw,readonly=on,file=/home/alive/grub-next/build/phase4/fixtures/iso.img",
+          "-device",
+          "virtio-blk-pci,drive=fixture5,logical_block_size=2048,physical_block_size=2048"
+        ],
+        "exit_code": 0,
+        "markers": [
+          "BOOT:PASS:firmware-time",
+          "BOOT:PASS:loader-abort-commit",
+          "BOOT:PASS:memory-owners",
+          "BOOT:PASS:memory-log",
+          "BOOT:PANIC:phase1-reset",
+          "BOOT:PASS:storage-ready",
+          "BOOT:PASS:storage-rescan-stale",
+          "BOOT:PASS:resource-manifest",
+          "BOOT:PASS:resource-config-font",
+          "BOOT:PASS:module-sdk-execution",
+          "BOOT:PASS:module-duplicate-rollback-freeze",
+          "BOOT:PASS:module-api-call",
+          "BOOT:PASS:storage-fat",
+          "BOOT:PASS:storage-ext",
+          "BOOT:PASS:storage-ntfs",
+          "BOOT:PASS:storage-iso9660"
+        ]
+      },
+      "storage-x86_64-efi": {
+        "command": [
+          "qemu-system-x86_64",
+          "-accel",
+          "tcg",
+          "-display",
+          "none",
+          "-monitor",
+          "none",
+          "-no-reboot",
+          "-serial",
+          "file:/home/alive/grub-next/build/phase4/storage-x86_64-efi.serial.log",
+          "-m",
+          "256M",
+          "-drive",
+          "if=pflash,format=raw,readonly=on,file=/usr/share/OVMF/OVMF_CODE_4M.fd",
+          "-drive",
+          "if=pflash,format=raw,file=/home/alive/grub-next/build/phase4/x86_64-efi-vars.fd",
+          "-drive",
+          "if=none,id=esp,format=raw,file=fat:rw:/home/alive/grub-next/build/phase4/esp-x86_64-efi",
+          "-device",
+          "virtio-blk-pci,drive=esp",
+          "-drive",
+          "if=none,id=fixture0,format=raw,readonly=on,file=/home/alive/grub-next/build/phase4/fixtures/gpt4096.img",
+          "-device",
+          "virtio-blk-pci,drive=fixture0,logical_block_size=4096,physical_block_size=4096",
+          "-drive",
+          "if=none,id=fixture1,format=raw,readonly=on,file=/home/alive/grub-next/build/phase4/fixtures/ext2.img",
+          "-device",
+          "virtio-blk-pci,drive=fixture1",
+          "-drive",
+          "if=none,id=fixture2,format=raw,readonly=on,file=/home/alive/grub-next/build/phase4/fixtures/ext3.img",
+          "-device",
+          "virtio-blk-pci,drive=fixture2",
+          "-drive",
+          "if=none,id=fixture3,format=raw,readonly=on,file=/home/alive/grub-next/build/phase4/fixtures/ext4.img",
+          "-device",
+          "virtio-blk-pci,drive=fixture3",
+          "-drive",
+          "if=none,id=fixture4,format=raw,readonly=on,file=/home/alive/grub-next/build/phase4/fixtures/ntfs.img",
+          "-device",
+          "virtio-blk-pci,drive=fixture4",
+          "-drive",
+          "if=none,id=fixture5,format=raw,readonly=on,file=/home/alive/grub-next/build/phase4/fixtures/iso.img",
+          "-device",
+          "virtio-blk-pci,drive=fixture5,logical_block_size=2048,physical_block_size=2048",
+          "-debugcon",
+          "file:/home/alive/grub-next/build/phase4/storage-x86_64-efi.debug.log"
+        ],
+        "exit_code": 0,
+        "markers": [
+          "BOOT:PASS:firmware-time",
+          "BOOT:PASS:loader-abort-commit",
+          "BOOT:PASS:memory-owners",
+          "BOOT:PASS:memory-log",
+          "BOOT:PANIC:phase1-reset",
+          "BOOT:PASS:storage-ready",
+          "BOOT:PASS:storage-rescan-stale",
+          "BOOT:PASS:resource-manifest",
+          "BOOT:PASS:resource-config-font",
+          "BOOT:PASS:module-sdk-execution",
+          "BOOT:PASS:module-duplicate-rollback-freeze",
+          "BOOT:PASS:module-api-call",
+          "BOOT:PASS:storage-fat",
+          "BOOT:PASS:storage-ext",
+          "BOOT:PASS:storage-ntfs",
+          "BOOT:PASS:storage-iso9660"
+        ]
+      },
+      "x86_64-efi": {
+        "command": [
+          "qemu-system-x86_64",
+          "-accel",
+          "tcg",
+          "-display",
+          "none",
+          "-monitor",
+          "none",
+          "-no-reboot",
+          "-serial",
+          "file:/home/alive/grub-next/build/phase4/x86_64-efi.serial.log",
+          "-m",
+          "256M",
+          "-drive",
+          "if=pflash,format=raw,readonly=on,file=/usr/share/OVMF/OVMF_CODE_4M.fd",
+          "-drive",
+          "if=pflash,format=raw,file=/home/alive/grub-next/build/phase4/x86_64-efi-vars.fd",
+          "-drive",
+          "if=none,id=esp,format=raw,file=fat:rw:/home/alive/grub-next/build/phase4/esp-x86_64-efi",
+          "-device",
+          "virtio-blk-pci,drive=esp",
+          "-debugcon",
+          "file:/home/alive/grub-next/build/phase4/x86_64-efi.debug.log"
+        ],
+        "exit_code": 0,
+        "markers": [
+          "BOOT:PASS:firmware-time",
+          "BOOT:PASS:loader-abort-commit",
+          "BOOT:PASS:memory-owners",
+          "BOOT:PASS:memory-log",
+          "BOOT:PANIC:phase1-reset",
+          "BOOT:PASS:storage-ready",
+          "BOOT:PASS:storage-rescan-stale",
+          "BOOT:PASS:resource-manifest",
+          "BOOT:PASS:resource-config-font",
+          "BOOT:PASS:module-sdk-execution",
+          "BOOT:PASS:module-duplicate-rollback-freeze",
+          "BOOT:PASS:module-api-call",
+          "BOOT:PASS:efi-context:x86_64-efi",
+          "BOOT:PASS:fp-state",
+          "BOOT:PASS:efi-bs-rt-loader-types",
+          "BOOT:PASS:efi-firmware-reservations"
+        ]
+      }
+    },
+    "reproducible": true,
+    "resource_checks": {
+      "corrupt_input_no_fallback": true,
+      "diskless_bios": true,
+      "efi_readonly_section": true,
+      "logical_resources_identical": true,
+      "module_bytes_match_sdk": true
+    },
+    "sdk": {
+      "arm64-efi/failing": {
+        "external_build_identical": true,
+        "sha256": "cfbc039a0d16598c8810fc51854ad018cc1bbc423791036f32a85ddcc2cf363b",
+        "undefined_imports": 0
+      },
+      "arm64-efi/sample": {
+        "external_build_identical": true,
+        "sha256": "68e0a89c8c9a7313759c5efa05ff98a149be726a4e07462b4706a0f177b8fd0c",
+        "undefined_imports": 0
+      },
+      "i386-efi/failing": {
+        "external_build_identical": true,
+        "sha256": "d66e883560a34160225523888ca2628992f4a75c36e5c5409a913e972df5974e",
+        "undefined_imports": 0
+      },
+      "i386-efi/sample": {
+        "external_build_identical": true,
+        "sha256": "20fefc8fbcb15160dd083f08801b276d7516c06d8bd9c7da1ccd8b1c8498a183",
+        "undefined_imports": 0
+      },
+      "i386-pc/failing": {
+        "external_build_identical": true,
+        "sha256": "ed582bed79f9c12a4bf1d6cc5e8ef5e54930bfea110285c1f74db1d2ee76cb99",
+        "undefined_imports": 0
+      },
+      "i386-pc/sample": {
+        "external_build_identical": true,
+        "sha256": "bf6a3dab1eebec9651c39e85cc28bcc181a152b9c1050c71b07dd1910fc26c05",
+        "undefined_imports": 0
+      },
+      "loongarch64-efi/failing": {
+        "external_build_identical": true,
+        "sha256": "96ae7f6bf41d8cbdad0efde74679f9ad8c5394890b947b8e60bdd28bc831ded3",
+        "undefined_imports": 0
+      },
+      "loongarch64-efi/sample": {
+        "external_build_identical": true,
+        "sha256": "102a62dc6b20c11cb49945d588b27b7c45525358272f599a6bb3f3d067f5f1dd",
+        "undefined_imports": 0
+      },
+      "x86_64-efi/failing": {
+        "external_build_identical": true,
+        "sha256": "9744f3875e5a77ee50ddacf292075edf76695190e92cd6ecaa619bf89fc203a2",
+        "undefined_imports": 0
+      },
+      "x86_64-efi/sample": {
+        "external_build_identical": true,
+        "sha256": "824142ffe4c8a9cc61f95de4ff491746722ce04a307daa3ffb74030c2cf06551",
+        "undefined_imports": 0
+      }
+    },
+    "sha256": {
+      "arm64-efi/boot-core.efi": "ce5469c5491112faafbf97d185fde6140da7d9a290611d128551f5fd5d7dd857",
+      "arm64-efi/resource.cpio": "d49ad053797c48c98f07c53c5e4771b254257899e5a40eba082530b72c84562e",
+      "arm64-efi/resource.manifest.sha256": "e6ad3d0f471e303b8e47ed164f420dbaf34f824e18bb2e2ed693f9dfca6f6c40",
+      "host/boot-core-test": "ea613565f917ac91a566d66e9f47272c94d90e019db7f8e6ddac25764a799bf3",
+      "host/boot-storage-fuzz": "e35803e196be10a9d23a20ace46222bf9a27dd52e4aee02474f3c46df31c78c0",
+      "host/boot-storage-read": "741a89843b581921f1e2f3adcd6c559dfcfea1b1f8516cd8cb3969fc8871dfd4",
+      "host/boot-storage-test": "2c193b9e2c49cae00057772b459a85c8ea9456b1887f56acd7075d92dc03ab52",
+      "host/resource.cpio": "97bda9c8c7fae0769dc4b4c90bd62488f45a789c69ba8ca4a54c68df47abf3cc",
+      "host/resource.manifest.sha256": "51faefe84ba7665880b969f1f8b9ba021d909396936290d3c0cae9dba300830e",
+      "i386-efi/boot-core.efi": "b18af13e2cea38c65981c53ce420243312ec6134e7c2d883d2e25b77f2397c60",
+      "i386-efi/resource.cpio": "b31577cfbe50beec7c01cbd2b2f42bdac6e9f350fc3be21d36617c2222b7da56",
+      "i386-efi/resource.manifest.sha256": "879561c87cc9307e6e8834ec4cdaca17689bab7db35196aa989dad4a7f210629",
+      "i386-pc/boot-core.elf": "75c46027f1a533609d885ebede28663486d9b41e7d67ed38fcd8ba470f7f5954",
+      "i386-pc/boot-linux.bz": "b0ae8113b8782858d494fcf4a7eeeaeded594b2bfd5e5b329b05972605048f63",
+      "i386-pc/resource.cpio": "0222915a92466c749446893bed368124f98f1fb49daa09745b9382d4f66e75a9",
+      "i386-pc/resource.manifest.sha256": "71835a608a1749dfc0828439081e68857f992d8399c10a451ad46a449449725a",
+      "loongarch64-efi/boot-core.efi": "c7e50cb327c5f124522b7616166f9f82b9134d8e39730b7e8dcbb108e96a33d1",
+      "loongarch64-efi/resource.cpio": "12f82bf55421a80e15a4519cecb1b2d2c0e8296043d80f1d63022d130fad60d2",
+      "loongarch64-efi/resource.manifest.sha256": "06f9e4b7fafcdb58a8c0e2c9fcf8e0029e0bb348e1c33c9f44d27268a1f895ef",
+      "x86_64-efi/boot-core.efi": "1103ffa17331d8d9ac838841694ee692410fab3ba66cb92ba4c84fa0a92c372a",
+      "x86_64-efi/resource.cpio": "61ddb5161b1a88373f41f4e19171c2eebd32b6514fd91de86ba7400b84848fe4",
+      "x86_64-efi/resource.manifest.sha256": "f45533020518f9648ee86e3db4c5a8c5b073c842b00da3a6c81990cb6c544e93"
+    },
+    "source_date_epoch": "1704067200"
+  },
+  "sanitizer_boundary": "ASan and UBSan; function-type check disabled only on upstream fshelp opaque-node callbacks",
+  "scope": "Phase 4 upstream GRUB snapshot plus private compatibility layer and two isolated fixes; host and QEMU, no real-hardware claim",
+  "source_sha256": {
+    "cmake/storage.cmake": "c3e7a89c38fb5c941984eefcbaaae3af5dd7bbb7d588f88215a5b44fb305384e",
+    "core/grub/arena.c": "e1876f30863a30016adb8997c0a496c8ff24730de5ff20faf97cdcb57d0fff8e",
+    "core/grub/compat.c": "ff1eac9a7459c97e007ff07763650f0bb56e8186e270eca418b060faf6a72181",
+    "core/grub/context.h": "c58b6a18298ca4f14f2d0028dfd0322a711084d3e95b8fe960fa6a17588513ff",
+    "core/grub/include/grub/charset.h": "913821e15e7b842b102d2b77af6c0bb194f241ec9d5dbb76c980f07b677efc30",
+    "core/grub/include/grub/disk.h": "cdc2731ef0b1b7a53378bfaab3fe59f7ee7575bd7b349366de996567ad9f85bb",
+    "core/grub/include/grub/dl.h": "7c33550f0dbb0447e2c6e0033744eae9f67af9eeb510c0d6a5ab4da9cd4e216c",
+    "core/grub/include/grub/err.h": "c4e09abea7bb51d22ff9e57929ea8c47249df18d8e5a12b39babbc084c652af4",
+    "core/grub/include/grub/file.h": "e8eb02236335db031ed5527d120a569bc7f3ee38488d865beac9052a9f962681",
+    "core/grub/include/grub/fs.h": "cbaf92c1c4520f01ca8bfa8ad4ca58773c77fec1dee26e61e774b57abbda8949",
+    "core/grub/include/grub/i18n.h": "7d163546c194a59493b2c0a7c83ebd7e76c08661e3d633a9c2386f85ba9834cb",
+    "core/grub/include/grub/lockdown.h": "06ed7f4424f17ec13ee3257e99d3423a73a172e630323196121aeba728fc84d3",
+    "core/grub/include/grub/misc.h": "20bd4feb92ad9606bb42ddd950ceb9618351a2e97551ef8b3c5b9b9089096bb3",
+    "core/grub/include/grub/mm.h": "5973f6d2a11e3798f1293fae24ada5b1601dc052e97e96e962165c4ba20e90b7",
+    "core/grub/include/grub/symbol.h": "53339e004484fa6ba0400276d9273370892ca8941e83284b8e18f7e80235ad54",
+    "core/grub/include/grub/types.h": "1fdecf7982f11aa34b03a1485174bcefb848fe54a47baca0757dcb41593270cf",
+    "core/storage/block.c": "acf5895bb8bccd091667b23cb7ea1b401977d408936202861cc9a858d8c3cd8a",
+    "core/storage/fs.c": "8cbc3b17ad0b7719c5d42deabb65244714f6a6163a670c208cc95e3b1bfaf10c",
+    "core/storage/internal.h": "ea7e0328df6e8e4ca50d8b608a0591c20f628a15d39390b1a23671790a840418",
+    "core/storage/partition.c": "d008a1674c1d40ff0ffda830c939e583238a470bae6b5988e15b809137bd11c9",
+    "host/block.c": "56b66a4cd39ca70501113919f21693d82a38907c74fc31a339118581e6e24fba",
+    "host/grub_alloc.c": "bccc78ca51f26154c39bf810572f9e2096b25cbf081bc490382d474dbf7f8022",
+    "host/storage_read.c": "30c3bc868121b20fc575cde4989df6e3ad2202737dbc2026fc7872695d8fd458",
+    "include/boot/storage.h": "b67226143c3ebbbd94d38a84eacb2bf10d567b557f8f4d5c3b136e532f82d727",
+    "include/boot/storage_platform.h": "870000ef3320f64455aa10388df913ac4e1b7d2d75d858600aa6aea4d0a768df",
+    "patches/grub/0001-ext4-leading-hole.patch": "159a75619742444a0988b26dbe655e75a728ed482cdb3232518411d446e43930",
+    "patches/grub/0002-fat-self-cycle.patch": "7e3b1559786ed64a3c25bcf838f9662bda4c4dc6960372ed68b9cfed72460d52",
+    "platform/bios/disk_thunk.S": "72158d49cc23c06fa488800302cdbbe5f1db91441303b95bea1ddd07ef44bc23",
+    "platform/bios/storage.c": "c44a39748b4c21ed158ccc004f41cde628ed06f05397c5f843eb9bf7217974d2",
+    "platform/efi/storage.c": "1e1aa1ecc462f5ebd2fd5acebf4369c0e7bdceefad4ca42abca281c9be872cf2",
+    "tests/efi_storage_test.c": "5663023466739af086de6aad84fb0b6db4ba284238794d1d5009bc2222ef2f61",
+    "tests/grub_compat_test.c": "2bb26400e5944c6446f42ea66935a7ab29fc47d79aa5b8433c6b68564b6d2391",
+    "tests/storage.py": "d62e017c68b6b8a5c882a51f7cd4c77b57d8b6bba4271d76e4c12030359c55f9",
+    "tests/storage_corruption.py": "72b784a1817496364aa81aaad6cfe33b688d04157ab533e6152714ee8a943830",
+    "tests/storage_fixtures.py": "2e53a0a610a11479c5c0ac39db5cf05eb1c52dc2ec452a5dee3fc3dba41c0741",
+    "tests/storage_fuzz.c": "f98d6d11b0e83c619c668cfacb05aaf7561e2eb2b086c09042874c819f763be7",
+    "tests/storage_probe.c": "c795beda8def18b501fa725c02850d8a7eb381b9f2f2d81cb49a265c22682231",
+    "tests/storage_test.c": "65de4fdffbebdc1f9a514ce1b9c959169b8d295b3cba5dfb957c58fbd2a3df43",
+    "tools/import_grub.py": "3509d29dd8d4097f1300773ff172b706ed02dc0167156f44f62f006810d6aefb",
+    "tools/prepare_grub.py": "cba70a2f328954f4e37c892d3a4ebfaa2620ab7297d6eff572cf94c00a8ca476",
+    "vendor/grub/grub-core/disk/diskfilter.c": "2760910813b4a75825beec30f778515b65eb5870c09e55f68dca126a2546af5a",
+    "vendor/grub/grub-core/disk/dmraid_nvidia.c": "86a6b6dfe62ce93fa12777b508aa8422360116575244394f384f7d58f4dc227a",
+    "vendor/grub/grub-core/disk/ldm.c": "0bf1116a09dbdc372f4629ced087f74849a327706f72cfae06d4c55ce99c7976",
+    "vendor/grub/grub-core/disk/lvm.c": "73dd8ba02f11dd0e61f2a4035e287717f4dd0d9238cfe61f5460303384e1469a",
+    "vendor/grub/grub-core/disk/mdraid1x_linux.c": "f1d62e08fb81d316eb86729d7549fc37e888bd33ece0d44ff809969a8044f5b4",
+    "vendor/grub/grub-core/disk/mdraid_linux.c": "c4b6adc2a85a51e4342e1e1014d396f50aeaf84043b8a3498c11dde6e67be894",
+    "vendor/grub/grub-core/disk/mdraid_linux_be.c": "c3a451480d5ae9b9860f59cd2f0d1c4c2c41e97bd5ef89ce885ff763b3d4821f",
+    "vendor/grub/grub-core/disk/raid5_recover.c": "86822a3be120a3af42be64532ace2865ffc0a1d387f871f0e73c4c73d821b21e",
+    "vendor/grub/grub-core/disk/raid6_recover.c": "862dcdbe79510fe6916e5161e75a189fa285993b1c55082212d25f21ca50d513",
+    "vendor/grub/grub-core/fs/ext2.c": "ca194ea4d903725fdd000d349f8909fb839f1db7e0b38a64263591109fcc4412",
+    "vendor/grub/grub-core/fs/fat.c": "33e3da3c1544149835b7ec87563e0c7629d849afc162444d6415c9faee46aee5",
+    "vendor/grub/grub-core/fs/fshelp.c": "43d7d4c3228fca6e7ec7631eb5c8a44172aa0a20fc7ce8f12aa8e3997d29d9fc",
+    "vendor/grub/grub-core/fs/iso9660.c": "40aa645930b33907dbe0cf7ded3bf4a51356890ca827589025aa8d1c86a387f5",
+    "vendor/grub/grub-core/fs/ntfs.c": "3b2228c7c5c656e7e0cc751dbcdfe1e6bdb54c701c6179f06c02e7a5ddea3735",
+    "vendor/grub/grub-core/fs/ntfscomp.c": "8a9a60b3d25cf6b963d2f72517908f1096e935f609735e76887c4668d86fdc55",
+    "vendor/grub/include/grub/compiler.h": "7b85d7db31a586e5258d8745f86689a8bbc0947b125888a993acd83097953cb3",
+    "vendor/grub/include/grub/datetime.h": "53f9ac4c11084de84acffa8842ec4a613ab0650e7d16badf59b3e85d3385c194",
+    "vendor/grub/include/grub/diskfilter.h": "846269603da5b8a17fd5d46d181dd358c26632674a058d2c6a2114cf1103aafe",
+    "vendor/grub/include/grub/fat.h": "d674a60b6ee3f73d1e4a0212ddc34ed7ff6e68621d6ec9d3558d97e2f1e154a9",
+    "vendor/grub/include/grub/fshelp.h": "48074fe5dd525f7f210fb26cf46ebaf6399866feeccfaf6bb483d470ba0f4688",
+    "vendor/grub/include/grub/ntfs.h": "535e1cc45f7a7845f6c7c7c03f2d6bf1122f2f347d8357c74eaeb38a85b5478a",
+    "vendor/grub/include/grub/safemath.h": "ceb20344dab94bff2a6e13b5991e417e03913c5dfeae30f9f5882e31ba774d8f",
+    "vendor/grub/sources.json": "ed835c39b98dc0631d4a6a27cc834bb7484deaec79198776c68ea808784f4744"
+  },
+  "test_scope_changes": [
+    "ext encrypted-file flag replaces volume encryption-feature rejection",
+    "NTFS out-of-record attribute start replaces ignored bytes-in-use mutation",
+    "ISO descriptor magic replaces root-record length field not enforced by upstream"
+  ]
+}

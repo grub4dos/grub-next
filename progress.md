@@ -1,7 +1,7 @@
 # 实施进度
 
-更新：2026-09-10。Phase 3 自包含资源归档已实现；Phase 1/2 平台、内存和模块切片持续回归，
-全部平台入口和新增模块执行均有实际 QEMU 启动证据。
+更新：2026-09-10。Phase 4 只读存储切片已实现；Phase 1/2/3 平台、内存、模块和资源持续回归，
+全部平台入口、模块与存储读取均有实际 QEMU 启动证据。
 连续跨 4 GiB RAM 的测试范围见下文；未将普通 PC 的保留区当作可写 RAM。
 
 2026-09-09 修复 GitHub Actions 的 Phase 1 准备步骤：QEMU 9.2.2 源码归档包含一个指向
@@ -221,6 +221,60 @@ CRC newc 或拼接 archive。Lua 是源文件资源，尚不执行；字体仅�
 拉丁字母的 5×7 子集，尚不渲染。manifest 用于损坏检测，没有密码学认证。
 资源输入未增加任意 Linux 高地址 initrd 协议支持；没有声称真实硬件、Secure Boot、
 磁盘文件系统、菜单或 OS handoff 已完成。未改 ref/ 或来源锁，未提交或推送。
+
+## Phase 4 原样移植交付（2026-09-10）
+
+- `include/boot/storage.h` / `core/storage/`：原生块 provider、只读 slice/filter、分区和
+  文件接口；64 位 byte/LBA/size，显式 `boot_status_t`，固定缓存与 generation，不恢复全局 errno。
+- 按用户维护性要求移除重写的四个 fs reader，使用 vendor/grub 中的原样 FAT、ISO9660、NTFS、
+  ext2、ntfscomp、fshelp。22 个原样文件逐文件 SHA-256 锁定；仅两个可审查 bug fix 在 build 应用。
+- core/grub 集中处理私有环境/API 适配：单次 operation error、嵌套恢复、限额分配与回收，
+  原生块到 512-byte sector adapter。公开 API 不暴露全局 grub_errno。
+- diskfilter/LVM/RAID 九个源文件原样预留，不编译、不声明 Phase 5 完成。
+  GPT/MBR/EBR 和 firmware providers 保留本工程实现，未迁移 nativedisk/controller drivers。
+- BIOS EDD/CHS provider，低地址 BL thunk/bounce，逐次校验 CR0/CR3/CR4 和 eager FP 恢复。
+  识别 EDD 对空托盘/ATAPI 的未知容量；CHS 软盘、EDD HDD/CD 有真实 QEMU 读取。
+- EFI LocateHandleBuffer/Block I/O provider：保留 device path hash、MediaId、native block
+  geometry；由 core 解析分区，rescan 或 media change 后不复用旧 handle/cache。
+- host file-backed shim 和 `boot-storage-read`；所有 runtime 与 host 由 CMake 编译同一 reader。
+  修正 EFI Clang/GCC 的 host stack-probe 依赖，并允许 BIOS 输入信息复用已覆盖它的 BL 保留区。
+- CI 切换到 Phase 4 超集，增加格式工具与 storage sanitizer 流程。无提交或推送，无远端 CI 运行声明。
+
+验收结果：
+
+| 项目 | 证据与边界 |
+| --- | --- |
+| 五个 target | 27 个 QEMU 场景，包括既有 12 个启动/资源场景、11 个 BIOS 存储场景、4 个 EFI 存储场景；按串口标记及 reset 退出判定 |
+| native block | host 512/2048/4096，EFI 实际 2048/4096 Block I/O；未对齐读取、分区偏移和 transfer/alignment 限制通过 |
+| 文件内容 | 14 个动态格式映像；12 MiB+137 文件完整 SHA-256，空/全零文件、Unicode 名称、目录、重排的碎片 FAT 链、ISO multi-extent |
+| 大型稀疏文件 | ext2/3/4 和 NTFS 的 5 GiB+26 逻辑文件；host 与五个 target 校验 5 GiB 偏移处的 hole/tail，未完整搬运 5 GiB |
+| stale 状态 | 全部 firmware target 实际 rescan 后旧句柄拒绝；host EFI mock 注入 MediaId 更换、空介质和枚举失败，不等同真实硬件热插拔 |
+| host 拒绝/诊断 | 12 项 CTest、12 个具名损坏场景、20,000 次有界 metadata 变异通过 ASan/UBSan；包括 FAT 环路、NTFS USA、GPT CRC、EBR 环路与溢出 |
+| 可复现与回归 | 独立源码路径的 runtime/resource/manifest/host storage 产物相同，10 个树外 SDK 模块相同；Phase 0、GCC x86 实际启动、引用与格式检查通过 |
+
+Ubuntu/WSL 实际命令：
+
+```sh
+python3 tools/check_references.py
+SOURCE_DATE_EPOCH=1704067200 python3 tests/phase4.py
+python3 tests/storage.py
+SOURCE_DATE_EPOCH=1704067200 python3 tests/phase0.py
+python3 tests/gcc_smoke.py
+git diff --check
+```
+
+原始串口、QEMU 命令、固件/产物摘要、独立路径与 SDK 比较在 `build/phase4/`；
+sanitizer、内容 SHA-256、具名损坏和变异记录在 `build/storage/`。
+完整输出为 `build/grub-import-phase4.log`、`build/grub-import-storage.log`、
+`build/grub-import-phase0.log` 和 `build/grub-import-gcc.log`。持久摘要见 [docs/phase4-evidence.json](docs/phase4-evidence.json)，
+接口/资源上限/格式 profile 见 [docs/phase4.md](docs/phase4.md)。
+
+边界：exFAT 未编译；上游 NTFS 压缩/attribute-list、ext meta_bg/symlink、ISO SUSP CE/symlink
+代码保留，但仅对 docs/phase4.md 所列媒体提供读取证据。不回放 journal，不校验 ext metadata checksum。
+GPT 只接受有效 primary header/entries，不自动从 backup 恢复；其他历史 partition maps 未移植。
+BIOS drive number 不是稳定硬件 identity；EFI path identity 不能代替介质 UUID。
+未声明真实硬件、Secure Boot、OS handoff、INT 13h/EFI map、LVM/RAID/cryptodisk、Lua 或写入完成。
+ref/ 和来源锁未改动；vendor 保留原格式，Allman 格式检查仅应用本工程代码。
 
 ## Phase 0 保留基线
 

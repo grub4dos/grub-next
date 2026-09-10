@@ -573,6 +573,12 @@ BIOS stage2 的网络资源优先由上级 iPXE/GRUB 作为 Multiboot module 或
 
 废除全局 `grub_errno`。API 返回明确 `boot_status_t`，并允许附加错误 context chain。
 
+GRUB fs/diskfilter 等成熟实现尽量按原样导入，保留文件路径、版权和源码格式。
+原始快照位于 `vendor/grub/`，逐文件锁定摘要；平台/API 适配集中在 `core/grub/`。
+必要的独立 bug fix 放入 `patches/grub/`，记录复现证据，由 CMake 在构建目录应用。
+不得为接口改造另写一套功能受限的 filesystem parser。私有 `grub_errno` 兼容宏只访问
+当前操作的错误 context，不能成为公开 API 或持久全局错误状态；嵌套调用必须恢复外层 context。
+
 最低层日志后端至少包括：
 
 - serial；

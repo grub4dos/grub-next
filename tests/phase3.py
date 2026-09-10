@@ -26,10 +26,10 @@ def pe_resource(path, expected):
     assert found == 1, path
 
 
-def main():
+def main(output=None):
     phase1.RESOURCE_INPUT = True
     phase1.COMMON += ["BOOT:PASS:resource-manifest", "BOOT:PASS:resource-config-font"]
-    output = phase1.ROOT / "build/phase3"
+    output = output or phase1.ROOT / "build/phase3"
     phase2.main(output)
     result = output/"results.json"
     report = json.loads(result.read_text())

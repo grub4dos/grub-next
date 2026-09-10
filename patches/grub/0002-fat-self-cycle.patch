@@ -1,0 +1,16 @@
+Reject a self-referencing FAT cluster before returning repeated file bytes.
+Evidence: tests/storage_corruption.py fat-cyclic-file, a valid FAT16 image with
+the first PROBE.BIN cluster redirected to itself. Keep the upstream hop limit.
+
+--- a/grub-core/fs/fat.c
++++ b/grub-core/fs/fat.c
+@@ -557,7 +557,8 @@
+ 	  if (next_cluster >= node->data->cluster_eof_mark)
+ 	    return ret;
+ 
+-	  if (next_cluster < 2 || next_cluster >= node->data->num_clusters)
++	  if (next_cluster < 2 || next_cluster >= node->data->num_clusters
++              || next_cluster == node->cur_cluster)
+ 	    {
+ 	      grub_error (GRUB_ERR_BAD_FS, "invalid cluster %u",
+ 			  next_cluster);

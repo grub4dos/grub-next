@@ -1,0 +1,18 @@
+Fix reads before the first extent (including an empty extent tree).
+Evidence: mkfs.ext4 -d creates zeros.bin as a fully sparse file; the upstream
+reader rejects it instead of returning zeroes. No format/API adaptation here.
+
+--- a/grub-core/fs/ext2.c
++++ b/grub-core/fs/ext2.c
+@@ -551,10 +551,7 @@
+             }
+         }
+       else
+-        {
+-          grub_error (GRUB_ERR_BAD_FS, "something wrong with extent");
+-	  ret = -1;
+-        }
++        ret = 0; /* A hole before the first extent, or an empty extent tree. */
+ 
+       if (leaf != (struct grub_ext4_extent_header *) inode->blocks.dir_blocks)
+ 	grub_free (leaf);

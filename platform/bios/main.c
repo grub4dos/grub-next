@@ -2,6 +2,7 @@
 #include <boot/context.h>
 #include <boot/fp.h>
 #include <boot/physical.h>
+#include <boot/storage_platform.h>
 extern void boot_bios_platform(struct boot_context *);
 extern void boot_core_test(struct boot_context *);
 struct boot_efi_services;
@@ -115,9 +116,22 @@ void boot_platform_main(uint32_t magic, uint32_t info)
     c->memory.physical_bits = bits;
     if (boot_memory_reserve(&c->memory, 0, 0x10000, BOOT_BL) ||
         boot_memory_reserve(&c->memory, (uintptr_t)boot_image_start,
-                            (size_t)(boot_image_end - boot_image_start), BOOT_BL) ||
-        boot_memory_reserve(&c->memory, info, info_size, BOOT_BL))
+                            (size_t)(boot_image_end - boot_image_start), BOOT_BL))
         boot_panic(c, "input-reservation", 0);
+    /* GRUB can place Multiboot information in an ELF segment alignment gap.
+     * The contiguous image reservation already owns that gap. */
+    int input_owned = 0;
+    for (size_t i = 0; i < c->memory.used; ++i)
+    {
+        const struct boot_allocation *a = &c->memory.allocations[i];
+        if (a->owner == BOOT_BL && info >= a->base && info - a->base <= a->size &&
+            info_size <= a->size - (info - a->base))
+            input_owned = 1;
+    }
+    if (!input_owned && boot_memory_reserve(&c->memory, info, info_size, BOOT_BL))
+        boot_panic(c, "input-info-reservation", 0);
+    if (input_owned)
+        boot_console(c, "BOOT:PASS:input-already-reserved\r\n");
     boot_console(c, c->entry == BOOT_ENTRY_MULTIBOOT2 ? "BOOT:PASS:context:multiboot2\r\n"
                                                       : "BOOT:PASS:context:linux\r\n");
     if (boot_fp_check())
@@ -128,6 +142,7 @@ void boot_platform_main(uint32_t magic, uint32_t info)
     boot_core_test(c);
     physical_test(c);
     boot_module_probe(c, NULL);
+    boot_storage_probe(c);
     if (boot_bios_resident_install(c))
         boot_panic(c, "resident-e820", 0);
     boot_console(c, "BOOT:PASS:resident-int15-e820\r\n");

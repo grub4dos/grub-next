@@ -1,5 +1,6 @@
 /* SPDX-License-Identifier: GPL-3.0-or-later */
 #include <boot/efi.h>
+#include <boot/storage_platform.h>
 extern boot_status_t boot_efi_platform(struct boot_context *, void *, struct boot_efi_system *);
 extern void boot_efi_memory_test(struct boot_context *);
 extern void boot_core_test(struct boot_context *);
@@ -24,5 +25,6 @@ uintptr_t BOOT_EFI efi_main(void *image, struct boot_efi_system *system)
     boot_core_test(&context);
     boot_efi_memory_test(&context);
     boot_module_probe(&context, system->services);
+    boot_storage_probe(&context);
     boot_panic(&context, "phase1-reset", 1);
 }

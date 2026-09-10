@@ -16,6 +16,12 @@ const char *boot_status_string(boot_status_t status)
         return "timeout";
     case BOOT_E_NOMEM:
         return "out of memory";
+    case BOOT_E_STALE:
+        return "stale storage handle";
+    case BOOT_E_NOT_FOUND:
+        return "not found";
+    case BOOT_E_CORRUPT:
+        return "corrupt metadata";
     default:
         return "unknown status";
     }

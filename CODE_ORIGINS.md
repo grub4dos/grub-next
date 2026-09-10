@@ -1,7 +1,31 @@
 # 代码来源与迁移基线
 
+## Phase 4 原样导入（2026-09-10）
+
+迁移前 `python3 tools/check_references.py` 通过。GRUB 固定提交为
+`2f972128c48b90bf8b63aadffe6d546976e1dee6`；没有改动 ref/ 或来源锁。
+
+| 目的位置 | 来源与适配 |
+| --- | --- |
+| `vendor/grub/grub-core/fs/{fat,ext2,iso9660,ntfs,ntfscomp,fshelp}.c` | 同名 GRUB 文件逐字节复制，保留完整 FSF 版权、GPLv3+ 许可和原有格式 |
+| `vendor/grub/include/grub/` | fshelp、fat、ntfs、datetime、compiler、safemath、diskfilter 七个同名头文件逐字节复制 |
+| `vendor/grub/grub-core/disk/` | diskfilter、lvm、mdraid_linux、mdraid_linux_be、mdraid1x_linux、raid5_recover、raid6_recover、dmraid_nvidia、ldm 九个文件原样预留；不参与 Phase 4 构建，不代表 Phase 5 已实现 |
+| `core/grub/`、`core/storage/fs.c` | 新写私有环境兼容层与公开 boot API 桥；类型/字节序、scoped error、限额分配、字符串/UTF-16、512-byte disk adapter、静态注册；没有重写文件系统 parser |
+| `patches/grub/0001-ext4-leading-hole.patch` | 仅修复 extent tree 为空或读取首 extent 前的 hole；动态 mkfs.ext4 zeros.bin 内容测试证明必要性 |
+| `patches/grub/0002-fat-self-cycle.patch` | 仅增加当前 cluster 指向自身的拒绝；fat-cyclic-file 证明必要性；上游通用 hop limit 保留 |
+| `core/storage/block.c`、`partition.c` | 先前阶段的新 block contract 与有界 GPT/MBR/EBR 实现保留；布局/分层参考 GRUB kern/disk.c、disk_common.c、partmap/gpt.c、msdos.c。它们不是原样移植文件 |
+| `platform/bios/storage.c`、`disk_thunk.S` | biosdisk.c 的 EDD/CHS 请求布局参考；新 provider 与本工程模式切换/FP 保存实现 |
+| `platform/efi/storage.c`、`include/boot/efi.h` | 参考 include/grub/efi/api.h 的协议布局；新枚举、MediaId、device-path hash 与 generation 实现 |
+
+`vendor/grub/sources.json` 记录 22 个文件各自的原始 SHA-256 和用途。
+`tools/import_grub.py` 不进行源码转换；CMake 调用 `tools/prepare_grub.py` 校验快照，
+在临时目录严格应用补丁并写入 build/grub-fs。host 与五个 runtime 编译同一组准备后的源文件。
+补丁中的修改不混入 vendor，不把适配代码散落到上游 parser 中。
+兼容层、新 API、host allocator、测试和构建工具使用 SPDX GPL-3.0-or-later。
+原先重写的 fat.c/ext.c/iso.c/ntfs.c 已移除，避免维护两套 reader。
+
 项目整体使用 GPL-3.0-or-later，完整许可文本见 LICENSE。新写的 Phase 0 C/汇编代码
-使用 SPDX 标识。除许可文本外，本阶段没有把参考 runtime 源码复制进产品，也没有把整个
+使用 SPDX 标识。除许可文本外，Phase 0 没有把参考 runtime 源码复制进产品，也没有把整个
 GRUB 构建作为新项目的一部分。
 
 ## 可审计参考历史

@@ -101,6 +101,10 @@
 
 ## 6. Phase 4: Storage core extraction
 
+状态：2026-09-10 已完成只读存储纵向切片。五个 target 共用 reader，GPT/MBR/EBR、
+native block sizes、rescan、文件内容和稀疏布局均有验收证据。上游代码接入范围、API 与
+复现命令见 `docs/phase4.md`；执行 `python3 tests/phase4.py` 和 `python3 tests/storage.py`。
+
 ### Work
 
 - 定义新的 block、partition、filter 和 filesystem API。
@@ -108,7 +112,8 @@
 - 实现 BIOS INT 13h provider。
 - 实现 EFI Block I/O provider。
 - 移植 GPT/MBR 和目标 partition parsers。
-- 移植首批文件系统：FAT、ISO9660、NTFS、ext2/3/4。
+- 原样导入首批文件系统：FAT、ISO9660、NTFS、ext2/3/4 和 fshelp；接口适配集中在兼容层。
+- 原始源码逐文件校验，必要 bug fix 使用独立补丁队列，不直接修改 vendor 快照。
 - 建立 host file-backed block shim。
 - 实现 provider lineage、stable identity 和 generation。
 - 实现 logical/physical block size 和 alignment handling。
@@ -126,7 +131,8 @@
 
 ### Work
 
-- 移植 loopback、cryptodisk 和 diskfilter。
+- 尽量原样移植 loopback、cryptodisk 和 diskfilter，沿用 vendor/兼容层/独立补丁分层。
+- Phase 4 已预留 diskfilter/LVM/RAID 源码；本阶段仍须完成实际接入与媒体验收。
 - 移植 LVM 和目标 RAID formats。
 - 将公共能力放入 core API 或静态链接进单个模块，不引入模块依赖。
 - 明确 physical blocklist 可追溯性。

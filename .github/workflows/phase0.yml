@@ -7,7 +7,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install build and emulation tools
-        run: sudo apt-get update && sudo apt-get install -y clang lld ninja-build cmake python3 qemu-system-x86 ovmf grub-pc-bin grub-common xorriso mtools
+        run: sudo apt-get update && sudo apt-get install -y clang lld ninja-build cmake patch python3 qemu-system-x86 ovmf grub-pc-bin grub-common xorriso mtools
       - name: Build, reproduce and boot
         env:
           SOURCE_DATE_EPOCH: '1704067200'
@@ -26,7 +26,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install GCC and emulation tools
-        run: sudo apt-get update && sudo apt-get install -y gcc gcc-mingw-w64-x86-64 clang lld ninja-build cmake python3 qemu-system-x86 ovmf grub-pc-bin grub-common xorriso mtools
+        run: sudo apt-get update && sudo apt-get install -y gcc gcc-mingw-w64-x86-64 clang lld ninja-build cmake patch python3 qemu-system-x86 ovmf grub-pc-bin grub-common xorriso mtools
       - name: Build and boot with GCC
         run: python3 tests/gcc_smoke.py
       - uses: actions/upload-artifact@v4
@@ -35,37 +35,38 @@ jobs:
           name: gcc-evidence
           path: build/gcc-smoke/*.log
 
-  phase3:
+  phase4:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - name: Install platform test dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y clang lld ninja-build cmake python3 python3-venv \
+          sudo apt-get install -y clang lld ninja-build cmake patch python3 python3-venv \
             qemu-system-x86 qemu-system-arm ovmf ovmf-ia32 qemu-efi-aarch64 \
             grub-pc-bin grub-common xorriso mtools gcc g++ pkg-config \
-            libglib2.0-dev libpixman-1-dev libfdt-dev
+            libglib2.0-dev libpixman-1-dev libfdt-dev dosfstools ntfs-3g e2fsprogs
       - name: Prepare pinned LoongArch emulator and firmware
         run: python3 tools/prepare_phase1.py
       - name: Build, reproduce and boot every entry
         env:
           SOURCE_DATE_EPOCH: '1704067200'
-        run: python3 tests/phase3.py
+        run: python3 tests/phase4.py
       - name: Host memory and parser sanitizers
         run: |
-          cmake -S . -B build/sanitizers -G Ninja -DCMAKE_C_COMPILER=clang -DCMAKE_BUILD_TYPE=Debug -DBOOT_SANITIZERS=ON
-          cmake --build build/sanitizers
-          ctest --test-dir build/sanitizers --output-on-failure
+          python3 tests/storage.py
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: phase3-evidence
+          name: phase4-evidence
           path: |
-            build/phase3/*.log
-            build/phase3/results.json
-            build/phase3/*/*.elf
-            build/phase3/*/*.efi
-            build/phase3/*/*.bz
-            build/phase3/*/resource.cpio
-            build/phase3/*/resource.manifest.sha256
+            build/phase4/*.log
+            build/phase4/results.json
+            build/phase4/*/*.elf
+            build/phase4/*/*.efi
+            build/phase4/*/*.bz
+            build/phase4/*/resource.cpio
+            build/phase4/*/resource.manifest.sha256
+            build/phase4/fixtures/manifest.json
+            build/storage/commands.log
+            build/storage/results.json

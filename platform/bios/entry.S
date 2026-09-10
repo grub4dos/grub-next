@@ -93,6 +93,6 @@ mxcsr: .long 0x1f80
 failure: .asciz "BOOT:FAIL:cpu-sse2-required\n"
 .section .bss,"aw",@nobits
 .balign 16
-stack: .skip 16384
+stack: .skip 131072
 stack_top:
 .section .note.GNU-stack,"",@progbits

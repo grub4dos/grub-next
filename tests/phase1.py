@@ -14,6 +14,7 @@ import phase0
 ROOT = phase0.ROOT
 OUTPUT = ROOT / "build/phase1"
 RESOURCE_INPUT = False
+EXTRA_ARTIFACTS = {}
 COMMON = ["BOOT:PASS:firmware-time", "BOOT:PASS:loader-abort-commit",
           "BOOT:PASS:memory-owners", "BOOT:PASS:memory-log", "BOOT:PANIC:phase1-reset"]
 def qemu(output, name, executable, args, markers, timeout=90, expected_panic="phase1-reset"):
@@ -94,6 +95,8 @@ def main():
     if RESOURCE_INPUT:
         for names in artifacts.values():
             names += ["resource.cpio", "resource.manifest.sha256"]
+    for target,names in EXTRA_ARTIFACTS.items():
+        artifacts[target] += names
     for target, names in artifacts.items():
         for name in names:
             p = output/target/name

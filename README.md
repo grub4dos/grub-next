@@ -1,8 +1,9 @@
 # grub-next
 
 依据 [DESIGN.md](DESIGN.md) 和 [plan.md](plan.md) 开发的新 bootloader。
-当前交付 Phase 1 平台和内存核心：BIOS Multiboot2/Linux 入口、四种 EFI 映像、统一 context、
-三类内存所有权及 BIOS PAE 高内存访问。启动后运行验收探针，故意 panic/reset；尚无菜单或 OS loader。
+当前交付到 Phase 4：平台/内存、ELF 模块 SDK、自包含资源归档和只读存储核心。
+BIOS INT 13h 与四种 EFI Block I/O 入口共用 FAT、ISO9660、NTFS、ext2/3/4 reader。
+启动后运行验收探针，故意 panic/reset；尚无菜单或 OS loader。
 项目采用 GPL-3.0-or-later，来源见 [CODE_ORIGINS.md](CODE_ORIGINS.md)。
 
 ## 构建与运行
@@ -11,10 +12,10 @@
 
 ```sh
 sudo apt-get update
-sudo apt-get install -y clang clang-format lld ninja-build cmake python3 python3-venv \
+sudo apt-get install -y clang clang-format lld ninja-build cmake python3 python3-venv patch \
   qemu-system-x86 qemu-system-arm ovmf ovmf-ia32 qemu-efi-aarch64 \
   grub-pc-bin grub-common xorriso mtools gcc g++ pkg-config \
-  libglib2.0-dev libpixman-1-dev libfdt-dev
+  libglib2.0-dev libpixman-1-dev libfdt-dev dosfstools ntfs-3g e2fsprogs
 python3 tools/prepare_phase1.py
 SOURCE_DATE_EPOCH=1704067200 python3 tests/phase1.py
 SOURCE_DATE_EPOCH=1704067200 python3 tests/phase0.py
@@ -86,6 +87,18 @@ runtime 没有自制 PE loader。
 section；BIOS 可以使用 Multiboot2 module、Linux initrd 或无外部输入的内嵌资源。
 格式、接口和启动示例见 [Phase 3 资源说明](docs/phase3.md)。Lua 源文件及最小字体已经打包，
 本阶段不执行 Lua 或渲染字体；SHA-256 内容清单用于损坏检测，没有签名认证。
+
+## Phase 4 只读存储
+
+运行 `SOURCE_DATE_EPOCH=1704067200 python3 tests/phase4.py` 验证全部固件 target 的
+INT 13h/Block I/O、分区和文件读取；`python3 tests/storage.py` 生成 FAT、ISO9660、NTFS、
+ext2/3/4 样本并执行 sanitizer、内容哈希、稀疏布局和损坏测试。
+host 的 `boot-storage-read` 可以列出目录或将文件内容写到标准输出。
+API、命令和格式边界见 [Phase 4 存储说明](docs/phase4.md)。
+
+GRUB 文件系统源码按原样保存在 `vendor/grub/`，接口适配集中在 `core/grub/`。
+`python3 tools/import_grub.py` 校验全部导入文件；必要 bug fix 独立保存在
+`patches/grub/`，仅在构建目录应用。diskfilter/LVM/RAID 源码已原样预留，尚未接入 Phase 5。
 
 ## 额外检查
 
