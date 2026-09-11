@@ -15,10 +15,17 @@ typedef enum
     GRUB_ERR_NOT_IMPLEMENTED_YET,
     GRUB_ERR_SYMLINK_LOOP,
     GRUB_ERR_EOF,
-    GRUB_ERR_READ_ERROR
+    GRUB_ERR_READ_ERROR,
+    GRUB_ERR_UNKNOWN_DEVICE,
+    GRUB_ERR_BAD_DEVICE,
+    GRUB_ERR_BAD_ARGUMENT,
+    GRUB_ERR_STILL_REFERENCED,
+    GRUB_ERR_TEST_FAILURE
 } grub_err_t;
 /* Private source-compatibility lvalue; storage belongs to a scoped operation. */
 grub_err_t *boot_grub_error_slot(void);
 #define grub_errno (*boot_grub_error_slot())
 grub_err_t grub_error(grub_err_t, const char *, ...);
+void grub_print_error(void);
+_Noreturn void grub_fatal(const char *, ...);
 #endif

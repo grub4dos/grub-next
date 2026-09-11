@@ -1,7 +1,8 @@
 # grub-next
 
 依据 [DESIGN.md](DESIGN.md) 和 [plan.md](plan.md) 开发的新 bootloader。
-当前交付到 Phase 4：平台/内存、ELF 模块 SDK、自包含资源归档和只读存储核心。
+当前交付包含 Phase 5 的 loopback、diskfilter/LVM/MD RAID 只读切片，
+以及既有平台/内存、ELF 模块 SDK、自包含资源归档和只读存储核心。
 BIOS INT 13h 与四种 EFI Block I/O 入口共用 FAT、ISO9660、NTFS、ext2/3/4 reader。
 启动后运行验收探针，故意 panic/reset；尚无菜单或 OS loader。
 项目采用 GPL-3.0-or-later，来源见 [CODE_ORIGINS.md](CODE_ORIGINS.md)。
@@ -98,7 +99,15 @@ API、命令和格式边界见 [Phase 4 存储说明](docs/phase4.md)。
 
 GRUB 文件系统源码按原样保存在 `vendor/grub/`，接口适配集中在 `core/grub/`。
 `python3 tools/import_grub.py` 校验全部导入文件；必要 bug fix 独立保存在
-`patches/grub/`，仅在构建目录应用。diskfilter/LVM/RAID 源码已原样预留，尚未接入 Phase 5。
+`patches/grub/`，仅在构建目录应用。
+
+## Phase 5 文件映像与组合卷
+
+运行 `SOURCE_DATE_EPOCH=1704067200 python3 tests/phase5.py`，执行 Phase 4 全套回归，
+再验证五个 target 的双层 loopback、LVM-on-MD 和降级 RAID5 实际读取。
+`python3 tests/volumes.py` 单独执行 host sanitizer、内容比对、stale/EOF 和损坏元数据验证。
+公开接口在 `include/boot/volume.h`，调用顺序、保留的上游文件和支持边界见
+[Phase 5 说明](docs/phase5.md)。cryptodisk、解压 filter 和物理 blocklist 导出尚未实现。
 
 ## 额外检查
 

@@ -10,6 +10,7 @@ struct boot_grub_context
     struct boot_grub_context *previous;
     grub_err_t error;
     boot_status_t provider_error;
+    boot_status_t resource_error;
     unsigned reads;
     struct grub_disk disk;
     struct grub_device device;
@@ -19,4 +20,6 @@ boot_status_t boot_grub_leave(struct boot_grub_context *, grub_err_t);
 void *boot_grub_alloc_raw(size_t);
 void boot_grub_free_raw(void *);
 extern grub_fs_t boot_grub_drivers[5];
+void boot_grub_retain(struct boot_grub_context *, struct boot_grub_context *);
+void boot_grub_release(struct boot_grub_context *);
 #endif

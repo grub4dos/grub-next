@@ -276,6 +276,61 @@ BIOS drive number 不是稳定硬件 identity；EFI path identity 不能代替�
 未声明真实硬件、Secure Boot、OS handoff、INT 13h/EFI map、LVM/RAID/cryptodisk、Lua 或写入完成。
 ref/ 和来源锁未改动；vendor 保留原格式，Allman 格式检查仅应用本工程代码。
 
+## Phase 5 loopback / diskfilter 切片（2026-09-11）
+
+按用户优先级完成 loopback 与 diskfilter 的导入和实际接入；不将整个 Phase 5
+（仍含 cryptodisk）标记为完成。
+
+- `vendor/grub/` 新增原样 `loopback.c`、`kern/list.c`、`list.h`、`lvm.h`，
+  共 26 个原文件有逐文件 SHA-256；既有 diskfilter、LVM、MD 1.x 和 RAID5/6 recovery
+  静态编入全部 target。来源仍为 `2f972128c48b90bf8b63aadffe6d546976e1dee6`。
+- `core/grub/volume.c` / `include/boot/volume.h` 提供 add、scan、list、open、reset 和
+  保守 physical-traceability 查询；适配集中于私有层，不移植旧 parser 或模块依赖。
+  session 复制 file/fs 句柄；公开错误仍显式返回，不恢复全局 grub_errno。
+- native block 层使用逐 slot active mask 和对齐 scratch，允许合法嵌套读取并防止
+  cache collision。已有分区 parser 同时用于物理来源和 loopback/组合卷。
+- 新增唯一上游补丁 `0003-diskfilter-lv-cycle.patch`：动态双 LV 相互引用在补丁前
+  复现 ASan stack-overflow，补丁后按 16 层上限拒绝；vendor 字节保持不变。
+- BIOS 空/不可读候选在扫描时跳过；已公开来源保持 generation/validate 检查。
+  loopback 和组合卷不能直接作为物理 blocklist 导出；不添加写入、解压或 map。
+
+实际验收结果：
+
+| 项目 | 证据与边界 |
+| --- | --- |
+| 新增五目标启动 | 15 个 QEMU 场景全部通过：每个 target 各验证双层 loopback、LVM-on-MD、缺一盘 RAID5，以及 reset/旧句柄失效；EFI fixture 使用 4096-byte Block I/O |
+| Phase 4 回归 | 原有 27 个启动场景通过；不同源码路径的 runtime/resource/host 产物相同，五 target 树外 SDK 仍通过 |
+| Host 内容 | 36 组（12 场景 × 512/2048/4096）；完整 131209-byte 内容逐字节一致，SHA-256 为 `f871df54997e4d27c096f10362f55a7677479c91d50c08af142975382241cd7f` |
+| Host 嵌套/生命周期 | 双层文件映像、loopback→MBR→LVM、LVM-on-MD、调用方 file/fs 重用、重复名、末扇区补零、非对齐/cache collision、来源关闭后的 cache-hit stale、reset 后再建会话 |
+| 拒绝 | 8 个具名损坏场景通过 ASan/UBSan：MD 盘数/role/偏移/版本，LVM label offset/metadata offset/size 和双 LV 环 |
+| 基线 | 12 项 host CTest、既有存储内容/12 类损坏/20000 次变异、Phase 0 和 GCC BIOS/Linux/X64 EFI 实际启动通过 |
+
+Ubuntu/WSL 实际命令：
+
+```sh
+python3 tools/check_references.py
+python3 tools/import_grub.py --import
+SOURCE_DATE_EPOCH=1704067200 python3 tests/phase5.py
+python3 tests/storage.py
+SOURCE_DATE_EPOCH=1704067200 python3 tests/phase0.py
+python3 tests/gcc_smoke.py
+git diff --check
+```
+
+完整主日志 `build/p5-phase5.log`；新增固件串口与命令在 `build/phase5/`，
+host 内容和拒绝证据在 `build/volumes/`，此前层次回归仍在 `build/phase4/`、
+`build/storage/`、`build/phase0/`、`build/gcc-smoke/`。
+额外回归总日志为 `build/p5-{storage,phase0,gcc}.log`；循环缺陷原始复现保留于
+`build/p5-cycle-before.log`。持久摘要见 [docs/phase5-evidence.json](docs/phase5-evidence.json)，
+接口和范围见 [docs/phase5.md](docs/phase5.md)。CI 已改为同一 Phase 5 超集，未声称远端运行。
+
+边界：本次是动态格式夹具与 QEMU 验收，不是生产阵列/真实硬件验证。LVM 测试限于
+单 PV 非连续 segment 及上述嵌套；MD 测试涵盖 1.0/1.1/1.2、RAID0/1/5，
+RAID6 recovery 虽已链接，但没有 RAID6 媒体验收。MD 0.90、NVIDIA RAID、LDM
+仍仅预留；cryptodisk、透明解压、blocklist 实体化、写入、map、Secure Boot 和 OS handoff
+未完成。loopback 和组合卷的保守 physical=false 不等于已实现 blocklist 算法。
+ref/、来源锁未改动，未提交或推送。
+
 ## Phase 0 保留基线
 
 保留并回归了原 Phase 0 的六配置构建、不同源码路径双构建、GRUB2 Multiboot2 hello、

@@ -17,6 +17,21 @@ struct allocation
 static struct allocation *allocations;
 static size_t allocated;
 #define BOOT_GRUB_HEAP_LIMIT (4u * 1024 * 1024)
+void boot_grub_retain(struct boot_grub_context *from, struct boot_grub_context *to)
+{
+    for (struct allocation *p = allocations; p; p = p->next)
+        if (p->owner == from)
+            p->owner = to;
+}
+void boot_grub_release(struct boot_grub_context *owner)
+{
+    for (struct allocation *p = allocations, *next; p; p = next)
+    {
+        next = p->next;
+        if (p->owner == owner)
+            grub_free(p + 1);
+    }
+}
 
 grub_err_t *boot_grub_error_slot(void)
 {
@@ -25,6 +40,8 @@ grub_err_t *boot_grub_error_slot(void)
 grub_err_t grub_error(grub_err_t error, const char *format, ...)
 {
     (void)format;
+    if (error == GRUB_ERR_OUT_OF_MEMORY)
+        current->resource_error = BOOT_E_NOMEM;
     return current->error = error;
 }
 void boot_grub_enter(struct boot_grub_context *ctx, const struct boot_slice *slice)
@@ -46,6 +63,8 @@ boot_status_t boot_grub_leave(struct boot_grub_context *ctx, grub_err_t error)
     current = ctx->previous;
     if (ctx->provider_error)
         return ctx->provider_error;
+    if (ctx->resource_error)
+        return ctx->resource_error;
     if (!error)
         error = ctx->error;
     switch (error)
@@ -55,8 +74,11 @@ boot_status_t boot_grub_leave(struct boot_grub_context *ctx, grub_err_t error)
     case GRUB_ERR_OUT_OF_MEMORY:
         return BOOT_E_NOMEM;
     case GRUB_ERR_FILE_NOT_FOUND:
+    case GRUB_ERR_UNKNOWN_DEVICE:
         return BOOT_E_NOT_FOUND;
     case GRUB_ERR_BAD_FILENAME:
+    case GRUB_ERR_BAD_ARGUMENT:
+    case GRUB_ERR_STILL_REFERENCED:
     case GRUB_ERR_BAD_FILE_TYPE:
         return BOOT_E_INVALID;
     case GRUB_ERR_NOT_IMPLEMENTED_YET:
@@ -140,6 +162,10 @@ grub_err_t grub_disk_read(grub_disk_t disk, grub_disk_addr_t sector, grub_off_t 
     if (++current->reads > 1048576 || sector > (UINT64_MAX >> 9) ||
         __builtin_add_overflow(sector << 9, offset, &at))
         return grub_error(GRUB_ERR_OUT_OF_RANGE, "read limit");
+    if (!disk->slice)
+        return boot_grub_virtual_read(disk, at, buffer, n);
+    if (at > disk->slice->size || n > disk->slice->size - at)
+        return grub_error(GRUB_ERR_OUT_OF_RANGE, "slice range");
     boot_status_t status = boot_block_read(disk->slice, at, buffer, n);
     if (status)
     {
@@ -340,7 +366,26 @@ char *grub_xasprintf(const char *format, ...)
             ++wide;
             ++format;
         }
-        if (*format == 'c')
+        if (*format == 's')
+        {
+            const char *s = va_arg(args, const char *);
+            while (*s && n < sizeof(output) - 1)
+                output[n++] = *s++;
+        }
+        else if (*format == 'd' || *format == 'u')
+        {
+            unsigned value = va_arg(args, unsigned);
+            char digits[10];
+            unsigned count = 0;
+            do
+            {
+                digits[count++] = (char)('0' + value % 10);
+                value /= 10;
+            } while (value);
+            while (count && n < sizeof(output) - 1)
+                output[n++] = digits[--count];
+        }
+        else if (*format == 'c')
             output[n++] = (char)va_arg(args, int);
         else if (*format == 'x')
         {

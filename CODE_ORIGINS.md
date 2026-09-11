@@ -1,5 +1,25 @@
 # 代码来源与迁移基线
 
+## Phase 5 loopback / diskfilter（2026-09-11）
+
+迁移前再次通过 `python3 tools/check_references.py`；沿用
+`2f972128c48b90bf8b63aadffe6d546976e1dee6`，ref/ 和来源锁未修改。
+当前 `vendor/grub/sources.json` 共记录 26 个逐字节相同的上游文件。
+
+| 目的位置 | 来源与适配 |
+| --- | --- |
+| `vendor/grub/grub-core/disk/loopback.c` | 同名原文件新增导入，保留 FSF 版权、完整许可和格式；通过私有 extcmd callback 桥调用，不引入旧 parser |
+| `vendor/grub/grub-core/kern/list.c`、`include/grub/{list,lvm}.h` | 同名原文件新增导入，供 diskfilter 注册表和 LVM parser 使用 |
+| `diskfilter.c`、`lvm.c`、`mdraid1x_linux.c`、`raid5_recover.c`、`raid6_recover.c` | 启用 Phase 4 预留的原样快照；与 loopback 静态编入同一个 core，无模块依赖 |
+| `core/grub/volume.c`、私有兼容头文件 | 新写 boot API / provider / 文件对象适配，集中管理 session allocations、512-byte 适配和 generation；复用现有分区 reader |
+| `patches/grub/0003-diskfilter-lv-cycle.patch` | 原 `validate_lv` 保留为 inner，新增 16 层递归上限；动态双 LV 相互引用夹具先复现 ASan stack-overflow，再验证有界拒绝 |
+| `core/storage/block.c` | 新块契约的嵌套读取支持；逐 slot recursion mask 和独立对齐 scratch 避免嵌套 cache collision |
+
+其余预留 `mdraid_linux.c`、`mdraid_linux_be.c`、`dmraid_nvidia.c`、`ldm.c`
+仍未启用；RAID6 recovery 已链接，但本次没有 RAID6 媒体内容验证。
+新代码使用 SPDX GPL-3.0-or-later；上游快照不添加 SPDX 行以保持字节一致，许可来自保留的文件头。
+具体验证边界见 [Phase 5](docs/phase5.md)。以下 Phase 4 数量为历史记录。
+
 ## Phase 4 原样导入（2026-09-10）
 
 迁移前 `python3 tools/check_references.py` 通过。GRUB 固定提交为

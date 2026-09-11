@@ -1,0 +1,27 @@
+--- a/grub-core/disk/diskfilter.c
++++ b/grub-core/disk/diskfilter.c
+@@ -532,8 +532,24 @@
+ static grub_err_t
+ validate_segment (struct grub_diskfilter_segment *seg);
+ 
++/* Bound malformed LV cycles before readability and read traversal. */
++static grub_err_t validate_lv_inner (struct grub_diskfilter_lv *lv);
++
+ static grub_err_t
+ validate_lv (struct grub_diskfilter_lv *lv)
++{
++  static unsigned depth;
++  grub_err_t err;
++  if (depth >= 16)
++    return grub_error (GRUB_ERR_BAD_FS, "volume graph depth exceeded");
++  depth++;
++  err = validate_lv_inner (lv);
++  depth--;
++  return err;
++}
++
++static grub_err_t
++validate_lv_inner (struct grub_diskfilter_lv *lv)
+ {
+   unsigned int i;
+   if (!lv)

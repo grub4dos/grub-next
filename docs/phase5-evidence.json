@@ -1,0 +1,576 @@
+{
+  "boundary": [
+    "generated media and QEMU, not production arrays or real hardware",
+    "LVM2 single PV, noncontiguous segments and tested nesting",
+    "MD 1.0/1.1/1.2 and RAID0/1/5 only have media evidence",
+    "RAID6 recovery linked but not media-validated",
+    "MD 0.90, NVIDIA and LDM remain staged only",
+    "no cryptodisk, decompression, writes, map, physical blocklists or OS handoff"
+  ],
+  "date": "2026-09-11",
+  "fixture_sha256": {
+    "inner.img": "6fed28d707a60ae3a739ee4e1102fff1548895bcc1d9cb0ebb1e66d8309d0423",
+    "lvm-cycle.img": "de78218c8583457c96d4d9471853d8944f608ca15c03722403e9b8a274de7e5c",
+    "lvm-loop.img": "72978b9ee73e089cdcf667e14db512e631edcc2bbb2d83756828c5e34296b5a1",
+    "lvm-mbr.img": "95961aa0056dea5dd53868abf64e9b32a60c8c254bb9635809467886b38ac92d",
+    "lvm-on-md.img": "e2965851056293780626a204fda68378db88488496a8ffc4674c0025aebe9e92",
+    "lvm.img": "0512082d2456c22eb8452faa9aadc9592fb43a976e30678696da30e975abd85c",
+    "md0-0.img": "976ffe0147e583aa14f20cf6cd6c96c262d77e6ae3ec4696fbdbe1a8561766ef",
+    "md0-1.img": "c4ad83516f15afb8614029c35890c14979f24a75a723db7128b37853e8528ba3",
+    "md1-0.img": "92f5350921b1823892de288542e814b878e700198c528221ace1e81cd9f7c0b7",
+    "md1-1.img": "34902a0ae5b62054c3082ad73c0f08f5636358c9d0f6ef9e3013a39a972720a6",
+    "md1-v10.img": "3d0f58bbb438c322fdb3465eb1f045b7dd7675acb3d3c88a29fb3ec97faa2d0f",
+    "md1-v11.img": "e8657bea0cca492ad6a936277ecb38ddad13f53962c39a277736bd695d23160f",
+    "md5-0.img": "d9e822ba68f1d68feeef8e2a694f5d6dd5d99349924564053989bd202415a077",
+    "md5-1.img": "4aca1332901c2a043aceee97eeabd71297884e574dba4ea6837e9c4a80eb8478",
+    "md5-2.img": "6be341c493764b40f96d69d40602d9be750c957ca627119bc41ab7b100ab1430",
+    "nested.img": "0c7476b9bd17267be9e950020c006bc3a1e2e9fa0391c1ff341471c8b72a9850",
+    "outer.img": "373c6f347b8d0ee8bf9216aa12b0823878e7e8e21b47e7299b19d94187669fb3"
+  },
+  "host_content_sha256": {
+    "loop-2048": "f871df54997e4d27c096f10362f55a7677479c91d50c08af142975382241cd7f",
+    "loop-4096": "f871df54997e4d27c096f10362f55a7677479c91d50c08af142975382241cd7f",
+    "loop-512": "f871df54997e4d27c096f10362f55a7677479c91d50c08af142975382241cd7f",
+    "loop-lvm-2048": "f871df54997e4d27c096f10362f55a7677479c91d50c08af142975382241cd7f",
+    "loop-lvm-4096": "f871df54997e4d27c096f10362f55a7677479c91d50c08af142975382241cd7f",
+    "loop-lvm-512": "f871df54997e4d27c096f10362f55a7677479c91d50c08af142975382241cd7f",
+    "lvm-on-md-2048": "f871df54997e4d27c096f10362f55a7677479c91d50c08af142975382241cd7f",
+    "lvm-on-md-4096": "f871df54997e4d27c096f10362f55a7677479c91d50c08af142975382241cd7f",
+    "lvm-on-md-512": "f871df54997e4d27c096f10362f55a7677479c91d50c08af142975382241cd7f",
+    "lvm/fixture-data-2048": "f871df54997e4d27c096f10362f55a7677479c91d50c08af142975382241cd7f",
+    "lvm/fixture-data-4096": "f871df54997e4d27c096f10362f55a7677479c91d50c08af142975382241cd7f",
+    "lvm/fixture-data-512": "f871df54997e4d27c096f10362f55a7677479c91d50c08af142975382241cd7f",
+    "md0-2048": "f871df54997e4d27c096f10362f55a7677479c91d50c08af142975382241cd7f",
+    "md0-4096": "f871df54997e4d27c096f10362f55a7677479c91d50c08af142975382241cd7f",
+    "md0-512": "f871df54997e4d27c096f10362f55a7677479c91d50c08af142975382241cd7f",
+    "md1-2048": "f871df54997e4d27c096f10362f55a7677479c91d50c08af142975382241cd7f",
+    "md1-4096": "f871df54997e4d27c096f10362f55a7677479c91d50c08af142975382241cd7f",
+    "md1-512": "f871df54997e4d27c096f10362f55a7677479c91d50c08af142975382241cd7f",
+    "md1-degraded-2048": "f871df54997e4d27c096f10362f55a7677479c91d50c08af142975382241cd7f",
+    "md1-degraded-4096": "f871df54997e4d27c096f10362f55a7677479c91d50c08af142975382241cd7f",
+    "md1-degraded-512": "f871df54997e4d27c096f10362f55a7677479c91d50c08af142975382241cd7f",
+    "md1-v10-2048": "f871df54997e4d27c096f10362f55a7677479c91d50c08af142975382241cd7f",
+    "md1-v10-4096": "f871df54997e4d27c096f10362f55a7677479c91d50c08af142975382241cd7f",
+    "md1-v10-512": "f871df54997e4d27c096f10362f55a7677479c91d50c08af142975382241cd7f",
+    "md1-v11-2048": "f871df54997e4d27c096f10362f55a7677479c91d50c08af142975382241cd7f",
+    "md1-v11-4096": "f871df54997e4d27c096f10362f55a7677479c91d50c08af142975382241cd7f",
+    "md1-v11-512": "f871df54997e4d27c096f10362f55a7677479c91d50c08af142975382241cd7f",
+    "md5-2048": "f871df54997e4d27c096f10362f55a7677479c91d50c08af142975382241cd7f",
+    "md5-4096": "f871df54997e4d27c096f10362f55a7677479c91d50c08af142975382241cd7f",
+    "md5-512": "f871df54997e4d27c096f10362f55a7677479c91d50c08af142975382241cd7f",
+    "md5-degraded-2048": "f871df54997e4d27c096f10362f55a7677479c91d50c08af142975382241cd7f",
+    "md5-degraded-4096": "f871df54997e4d27c096f10362f55a7677479c91d50c08af142975382241cd7f",
+    "md5-degraded-512": "f871df54997e4d27c096f10362f55a7677479c91d50c08af142975382241cd7f",
+    "nested-2048": "f871df54997e4d27c096f10362f55a7677479c91d50c08af142975382241cd7f",
+    "nested-4096": "f871df54997e4d27c096f10362f55a7677479c91d50c08af142975382241cd7f",
+    "nested-512": "f871df54997e4d27c096f10362f55a7677479c91d50c08af142975382241cd7f"
+  },
+  "host_rejections": {
+    "lvm-label-offset": "not found",
+    "lvm-metadata-overflow": "not found",
+    "lvm-metadata-size": "not found",
+    "lvm-mutual-cycle": "not found; bounded graph validation",
+    "md-count": "not found",
+    "md-overflow": "not found",
+    "md-role": "not found",
+    "md-version": "not found"
+  },
+  "phase4_qemu_count": 27,
+  "qemu": {
+    "arm64-efi-loop": {
+      "exit_code": 0,
+      "markers": [
+        "BOOT:PASS:firmware-time",
+        "BOOT:PASS:loader-abort-commit",
+        "BOOT:PASS:memory-owners",
+        "BOOT:PASS:memory-log",
+        "BOOT:PANIC:phase1-reset",
+        "BOOT:PASS:storage-ready",
+        "BOOT:PASS:storage-rescan-stale",
+        "BOOT:PASS:resource-manifest",
+        "BOOT:PASS:resource-config-font",
+        "BOOT:PASS:module-sdk-execution",
+        "BOOT:PASS:module-duplicate-rollback-freeze",
+        "BOOT:PASS:module-api-call",
+        "BOOT:PASS:volume-stale",
+        "BOOT:PASS:storage-ready",
+        "BOOT:PASS:loopback-nested"
+      ],
+      "serial": "build/phase5/arm64-efi-loop.serial.log"
+    },
+    "arm64-efi-lvm-md": {
+      "exit_code": 0,
+      "markers": [
+        "BOOT:PASS:firmware-time",
+        "BOOT:PASS:loader-abort-commit",
+        "BOOT:PASS:memory-owners",
+        "BOOT:PASS:memory-log",
+        "BOOT:PANIC:phase1-reset",
+        "BOOT:PASS:storage-ready",
+        "BOOT:PASS:storage-rescan-stale",
+        "BOOT:PASS:resource-manifest",
+        "BOOT:PASS:resource-config-font",
+        "BOOT:PASS:module-sdk-execution",
+        "BOOT:PASS:module-duplicate-rollback-freeze",
+        "BOOT:PASS:module-api-call",
+        "BOOT:PASS:volume-stale",
+        "BOOT:PASS:storage-ready",
+        "BOOT:PASS:volume:lvm/fixture-data",
+        "BOOT:PASS:storage-fat"
+      ],
+      "serial": "build/phase5/arm64-efi-lvm-md.serial.log"
+    },
+    "arm64-efi-raid5-degraded": {
+      "exit_code": 0,
+      "markers": [
+        "BOOT:PASS:firmware-time",
+        "BOOT:PASS:loader-abort-commit",
+        "BOOT:PASS:memory-owners",
+        "BOOT:PASS:memory-log",
+        "BOOT:PANIC:phase1-reset",
+        "BOOT:PASS:storage-ready",
+        "BOOT:PASS:storage-rescan-stale",
+        "BOOT:PASS:resource-manifest",
+        "BOOT:PASS:resource-config-font",
+        "BOOT:PASS:module-sdk-execution",
+        "BOOT:PASS:module-duplicate-rollback-freeze",
+        "BOOT:PASS:module-api-call",
+        "BOOT:PASS:volume-stale",
+        "BOOT:PASS:storage-ready",
+        "BOOT:PASS:volume:md/fixture",
+        "BOOT:PASS:storage-fat"
+      ],
+      "serial": "build/phase5/arm64-efi-raid5-degraded.serial.log"
+    },
+    "i386-efi-loop": {
+      "exit_code": 0,
+      "markers": [
+        "BOOT:PASS:firmware-time",
+        "BOOT:PASS:loader-abort-commit",
+        "BOOT:PASS:memory-owners",
+        "BOOT:PASS:memory-log",
+        "BOOT:PANIC:phase1-reset",
+        "BOOT:PASS:storage-ready",
+        "BOOT:PASS:storage-rescan-stale",
+        "BOOT:PASS:resource-manifest",
+        "BOOT:PASS:resource-config-font",
+        "BOOT:PASS:module-sdk-execution",
+        "BOOT:PASS:module-duplicate-rollback-freeze",
+        "BOOT:PASS:module-api-call",
+        "BOOT:PASS:volume-stale",
+        "BOOT:PASS:storage-ready",
+        "BOOT:PASS:loopback-nested"
+      ],
+      "serial": "build/phase5/i386-efi-loop.serial.log"
+    },
+    "i386-efi-lvm-md": {
+      "exit_code": 0,
+      "markers": [
+        "BOOT:PASS:firmware-time",
+        "BOOT:PASS:loader-abort-commit",
+        "BOOT:PASS:memory-owners",
+        "BOOT:PASS:memory-log",
+        "BOOT:PANIC:phase1-reset",
+        "BOOT:PASS:storage-ready",
+        "BOOT:PASS:storage-rescan-stale",
+        "BOOT:PASS:resource-manifest",
+        "BOOT:PASS:resource-config-font",
+        "BOOT:PASS:module-sdk-execution",
+        "BOOT:PASS:module-duplicate-rollback-freeze",
+        "BOOT:PASS:module-api-call",
+        "BOOT:PASS:volume-stale",
+        "BOOT:PASS:storage-ready",
+        "BOOT:PASS:volume:lvm/fixture-data",
+        "BOOT:PASS:storage-fat"
+      ],
+      "serial": "build/phase5/i386-efi-lvm-md.serial.log"
+    },
+    "i386-efi-raid5-degraded": {
+      "exit_code": 0,
+      "markers": [
+        "BOOT:PASS:firmware-time",
+        "BOOT:PASS:loader-abort-commit",
+        "BOOT:PASS:memory-owners",
+        "BOOT:PASS:memory-log",
+        "BOOT:PANIC:phase1-reset",
+        "BOOT:PASS:storage-ready",
+        "BOOT:PASS:storage-rescan-stale",
+        "BOOT:PASS:resource-manifest",
+        "BOOT:PASS:resource-config-font",
+        "BOOT:PASS:module-sdk-execution",
+        "BOOT:PASS:module-duplicate-rollback-freeze",
+        "BOOT:PASS:module-api-call",
+        "BOOT:PASS:volume-stale",
+        "BOOT:PASS:storage-ready",
+        "BOOT:PASS:volume:md/fixture",
+        "BOOT:PASS:storage-fat"
+      ],
+      "serial": "build/phase5/i386-efi-raid5-degraded.serial.log"
+    },
+    "i386-pc-loop": {
+      "exit_code": 0,
+      "markers": [
+        "BOOT:PASS:firmware-time",
+        "BOOT:PASS:loader-abort-commit",
+        "BOOT:PASS:memory-owners",
+        "BOOT:PASS:memory-log",
+        "BOOT:PANIC:phase1-reset",
+        "BOOT:PASS:storage-ready",
+        "BOOT:PASS:storage-rescan-stale",
+        "BOOT:PASS:resource-manifest",
+        "BOOT:PASS:resource-config-font",
+        "BOOT:PASS:module-sdk-execution",
+        "BOOT:PASS:module-duplicate-rollback-freeze",
+        "BOOT:PASS:module-api-call",
+        "BOOT:PASS:volume-stale",
+        "BOOT:PASS:storage-ready",
+        "BOOT:PASS:loopback-nested"
+      ],
+      "serial": "build/phase5/i386-pc-loop.serial.log"
+    },
+    "i386-pc-lvm-md": {
+      "exit_code": 0,
+      "markers": [
+        "BOOT:PASS:firmware-time",
+        "BOOT:PASS:loader-abort-commit",
+        "BOOT:PASS:memory-owners",
+        "BOOT:PASS:memory-log",
+        "BOOT:PANIC:phase1-reset",
+        "BOOT:PASS:storage-ready",
+        "BOOT:PASS:storage-rescan-stale",
+        "BOOT:PASS:resource-manifest",
+        "BOOT:PASS:resource-config-font",
+        "BOOT:PASS:module-sdk-execution",
+        "BOOT:PASS:module-duplicate-rollback-freeze",
+        "BOOT:PASS:module-api-call",
+        "BOOT:PASS:volume-stale",
+        "BOOT:PASS:storage-ready",
+        "BOOT:PASS:volume:lvm/fixture-data",
+        "BOOT:PASS:storage-fat"
+      ],
+      "serial": "build/phase5/i386-pc-lvm-md.serial.log"
+    },
+    "i386-pc-raid5-degraded": {
+      "exit_code": 0,
+      "markers": [
+        "BOOT:PASS:firmware-time",
+        "BOOT:PASS:loader-abort-commit",
+        "BOOT:PASS:memory-owners",
+        "BOOT:PASS:memory-log",
+        "BOOT:PANIC:phase1-reset",
+        "BOOT:PASS:storage-ready",
+        "BOOT:PASS:storage-rescan-stale",
+        "BOOT:PASS:resource-manifest",
+        "BOOT:PASS:resource-config-font",
+        "BOOT:PASS:module-sdk-execution",
+        "BOOT:PASS:module-duplicate-rollback-freeze",
+        "BOOT:PASS:module-api-call",
+        "BOOT:PASS:volume-stale",
+        "BOOT:PASS:storage-ready",
+        "BOOT:PASS:volume:md/fixture",
+        "BOOT:PASS:storage-fat"
+      ],
+      "serial": "build/phase5/i386-pc-raid5-degraded.serial.log"
+    },
+    "loongarch64-efi-loop": {
+      "exit_code": 0,
+      "markers": [
+        "BOOT:PASS:firmware-time",
+        "BOOT:PASS:loader-abort-commit",
+        "BOOT:PASS:memory-owners",
+        "BOOT:PASS:memory-log",
+        "BOOT:PANIC:phase1-reset",
+        "BOOT:PASS:storage-ready",
+        "BOOT:PASS:storage-rescan-stale",
+        "BOOT:PASS:resource-manifest",
+        "BOOT:PASS:resource-config-font",
+        "BOOT:PASS:module-sdk-execution",
+        "BOOT:PASS:module-duplicate-rollback-freeze",
+        "BOOT:PASS:module-api-call",
+        "BOOT:PASS:volume-stale",
+        "BOOT:PASS:storage-ready",
+        "BOOT:PASS:loopback-nested"
+      ],
+      "serial": "build/phase5/loongarch64-efi-loop.serial.log"
+    },
+    "loongarch64-efi-lvm-md": {
+      "exit_code": 0,
+      "markers": [
+        "BOOT:PASS:firmware-time",
+        "BOOT:PASS:loader-abort-commit",
+        "BOOT:PASS:memory-owners",
+        "BOOT:PASS:memory-log",
+        "BOOT:PANIC:phase1-reset",
+        "BOOT:PASS:storage-ready",
+        "BOOT:PASS:storage-rescan-stale",
+        "BOOT:PASS:resource-manifest",
+        "BOOT:PASS:resource-config-font",
+        "BOOT:PASS:module-sdk-execution",
+        "BOOT:PASS:module-duplicate-rollback-freeze",
+        "BOOT:PASS:module-api-call",
+        "BOOT:PASS:volume-stale",
+        "BOOT:PASS:storage-ready",
+        "BOOT:PASS:volume:lvm/fixture-data",
+        "BOOT:PASS:storage-fat"
+      ],
+      "serial": "build/phase5/loongarch64-efi-lvm-md.serial.log"
+    },
+    "loongarch64-efi-raid5-degraded": {
+      "exit_code": 0,
+      "markers": [
+        "BOOT:PASS:firmware-time",
+        "BOOT:PASS:loader-abort-commit",
+        "BOOT:PASS:memory-owners",
+        "BOOT:PASS:memory-log",
+        "BOOT:PANIC:phase1-reset",
+        "BOOT:PASS:storage-ready",
+        "BOOT:PASS:storage-rescan-stale",
+        "BOOT:PASS:resource-manifest",
+        "BOOT:PASS:resource-config-font",
+        "BOOT:PASS:module-sdk-execution",
+        "BOOT:PASS:module-duplicate-rollback-freeze",
+        "BOOT:PASS:module-api-call",
+        "BOOT:PASS:volume-stale",
+        "BOOT:PASS:storage-ready",
+        "BOOT:PASS:volume:md/fixture",
+        "BOOT:PASS:storage-fat"
+      ],
+      "serial": "build/phase5/loongarch64-efi-raid5-degraded.serial.log"
+    },
+    "x86_64-efi-loop": {
+      "exit_code": 0,
+      "markers": [
+        "BOOT:PASS:firmware-time",
+        "BOOT:PASS:loader-abort-commit",
+        "BOOT:PASS:memory-owners",
+        "BOOT:PASS:memory-log",
+        "BOOT:PANIC:phase1-reset",
+        "BOOT:PASS:storage-ready",
+        "BOOT:PASS:storage-rescan-stale",
+        "BOOT:PASS:resource-manifest",
+        "BOOT:PASS:resource-config-font",
+        "BOOT:PASS:module-sdk-execution",
+        "BOOT:PASS:module-duplicate-rollback-freeze",
+        "BOOT:PASS:module-api-call",
+        "BOOT:PASS:volume-stale",
+        "BOOT:PASS:storage-ready",
+        "BOOT:PASS:loopback-nested"
+      ],
+      "serial": "build/phase5/x86_64-efi-loop.serial.log"
+    },
+    "x86_64-efi-lvm-md": {
+      "exit_code": 0,
+      "markers": [
+        "BOOT:PASS:firmware-time",
+        "BOOT:PASS:loader-abort-commit",
+        "BOOT:PASS:memory-owners",
+        "BOOT:PASS:memory-log",
+        "BOOT:PANIC:phase1-reset",
+        "BOOT:PASS:storage-ready",
+        "BOOT:PASS:storage-rescan-stale",
+        "BOOT:PASS:resource-manifest",
+        "BOOT:PASS:resource-config-font",
+        "BOOT:PASS:module-sdk-execution",
+        "BOOT:PASS:module-duplicate-rollback-freeze",
+        "BOOT:PASS:module-api-call",
+        "BOOT:PASS:volume-stale",
+        "BOOT:PASS:storage-ready",
+        "BOOT:PASS:volume:lvm/fixture-data",
+        "BOOT:PASS:storage-fat"
+      ],
+      "serial": "build/phase5/x86_64-efi-lvm-md.serial.log"
+    },
+    "x86_64-efi-raid5-degraded": {
+      "exit_code": 0,
+      "markers": [
+        "BOOT:PASS:firmware-time",
+        "BOOT:PASS:loader-abort-commit",
+        "BOOT:PASS:memory-owners",
+        "BOOT:PASS:memory-log",
+        "BOOT:PANIC:phase1-reset",
+        "BOOT:PASS:storage-ready",
+        "BOOT:PASS:storage-rescan-stale",
+        "BOOT:PASS:resource-manifest",
+        "BOOT:PASS:resource-config-font",
+        "BOOT:PASS:module-sdk-execution",
+        "BOOT:PASS:module-duplicate-rollback-freeze",
+        "BOOT:PASS:module-api-call",
+        "BOOT:PASS:volume-stale",
+        "BOOT:PASS:storage-ready",
+        "BOOT:PASS:volume:md/fixture",
+        "BOOT:PASS:storage-fat"
+      ],
+      "serial": "build/phase5/x86_64-efi-raid5-degraded.serial.log"
+    }
+  },
+  "reference": {
+    "commit": "2f972128c48b90bf8b63aadffe6d546976e1dee6",
+    "files": [
+      {
+        "path": "grub-core/fs/fat.c",
+        "role": "phase4",
+        "sha256": "33e3da3c1544149835b7ec87563e0c7629d849afc162444d6415c9faee46aee5"
+      },
+      {
+        "path": "grub-core/fs/ext2.c",
+        "role": "phase4",
+        "sha256": "ca194ea4d903725fdd000d349f8909fb839f1db7e0b38a64263591109fcc4412"
+      },
+      {
+        "path": "grub-core/fs/iso9660.c",
+        "role": "phase4",
+        "sha256": "40aa645930b33907dbe0cf7ded3bf4a51356890ca827589025aa8d1c86a387f5"
+      },
+      {
+        "path": "grub-core/fs/ntfs.c",
+        "role": "phase4",
+        "sha256": "3b2228c7c5c656e7e0cc751dbcdfe1e6bdb54c701c6179f06c02e7a5ddea3735"
+      },
+      {
+        "path": "grub-core/fs/ntfscomp.c",
+        "role": "phase4",
+        "sha256": "8a9a60b3d25cf6b963d2f72517908f1096e935f609735e76887c4668d86fdc55"
+      },
+      {
+        "path": "grub-core/fs/fshelp.c",
+        "role": "phase4",
+        "sha256": "43d7d4c3228fca6e7ec7631eb5c8a44172aa0a20fc7ce8f12aa8e3997d29d9fc"
+      },
+      {
+        "path": "grub-core/disk/loopback.c",
+        "role": "phase5",
+        "sha256": "1943cec6948912eb946d23cbcc702838915b546dec48193536a39bba3e537dac"
+      },
+      {
+        "path": "grub-core/disk/diskfilter.c",
+        "role": "phase5",
+        "sha256": "2760910813b4a75825beec30f778515b65eb5870c09e55f68dca126a2546af5a"
+      },
+      {
+        "path": "grub-core/disk/lvm.c",
+        "role": "phase5",
+        "sha256": "73dd8ba02f11dd0e61f2a4035e287717f4dd0d9238cfe61f5460303384e1469a"
+      },
+      {
+        "path": "grub-core/disk/mdraid_linux.c",
+        "role": "staged",
+        "sha256": "c4b6adc2a85a51e4342e1e1014d396f50aeaf84043b8a3498c11dde6e67be894"
+      },
+      {
+        "path": "grub-core/disk/mdraid_linux_be.c",
+        "role": "staged",
+        "sha256": "c3a451480d5ae9b9860f59cd2f0d1c4c2c41e97bd5ef89ce885ff763b3d4821f"
+      },
+      {
+        "path": "grub-core/disk/mdraid1x_linux.c",
+        "role": "phase5",
+        "sha256": "f1d62e08fb81d316eb86729d7549fc37e888bd33ece0d44ff809969a8044f5b4"
+      },
+      {
+        "path": "grub-core/disk/raid5_recover.c",
+        "role": "phase5",
+        "sha256": "86822a3be120a3af42be64532ace2865ffc0a1d387f871f0e73c4c73d821b21e"
+      },
+      {
+        "path": "grub-core/disk/raid6_recover.c",
+        "role": "phase5",
+        "sha256": "862dcdbe79510fe6916e5161e75a189fa285993b1c55082212d25f21ca50d513"
+      },
+      {
+        "path": "grub-core/disk/dmraid_nvidia.c",
+        "role": "staged",
+        "sha256": "86a6b6dfe62ce93fa12777b508aa8422360116575244394f384f7d58f4dc227a"
+      },
+      {
+        "path": "grub-core/disk/ldm.c",
+        "role": "staged",
+        "sha256": "0bf1116a09dbdc372f4629ced087f74849a327706f72cfae06d4c55ce99c7976"
+      },
+      {
+        "path": "include/grub/fshelp.h",
+        "role": "header",
+        "sha256": "48074fe5dd525f7f210fb26cf46ebaf6399866feeccfaf6bb483d470ba0f4688"
+      },
+      {
+        "path": "include/grub/ntfs.h",
+        "role": "header",
+        "sha256": "535e1cc45f7a7845f6c7c7c03f2d6bf1122f2f347d8357c74eaeb38a85b5478a"
+      },
+      {
+        "path": "include/grub/fat.h",
+        "role": "header",
+        "sha256": "d674a60b6ee3f73d1e4a0212ddc34ed7ff6e68621d6ec9d3558d97e2f1e154a9"
+      },
+      {
+        "path": "include/grub/datetime.h",
+        "role": "header",
+        "sha256": "53f9ac4c11084de84acffa8842ec4a613ab0650e7d16badf59b3e85d3385c194"
+      },
+      {
+        "path": "include/grub/compiler.h",
+        "role": "header",
+        "sha256": "7b85d7db31a586e5258d8745f86689a8bbc0947b125888a993acd83097953cb3"
+      },
+      {
+        "path": "include/grub/safemath.h",
+        "role": "header",
+        "sha256": "ceb20344dab94bff2a6e13b5991e417e03913c5dfeae30f9f5882e31ba774d8f"
+      },
+      {
+        "path": "include/grub/diskfilter.h",
+        "role": "header",
+        "sha256": "846269603da5b8a17fd5d46d181dd358c26632674a058d2c6a2114cf1103aafe"
+      },
+      {
+        "path": "include/grub/list.h",
+        "role": "header",
+        "sha256": "6ce90fe746803457e9063205c7cef1bc2b84c2a533a46f63a328a8d88b1d62b2"
+      },
+      {
+        "path": "include/grub/lvm.h",
+        "role": "header",
+        "sha256": "ed5199da18a7b0d3418d752f1c187b469d5ded0cb625cf8f249eb215334c5b1e"
+      },
+      {
+        "path": "grub-core/kern/list.c",
+        "role": "phase5",
+        "sha256": "7409903d78eb6bbb9e68cca3851092eefbabc012f1a2bc340edaaa6bd11b03df"
+      }
+    ]
+  },
+  "regressions": {
+    "gcc": "build/p5-gcc.log",
+    "host_ctest_count": 12,
+    "phase0": "build/phase0/results.json",
+    "storage": "build/storage/results.json",
+    "storage_metadata_mutations": 20000
+  },
+  "runtime_sha256": {
+    "arm64-efi/boot-core.efi": "5e3dfe5b5d8f37a3f8d787f6e61c3b1ec3aa43a8a837176239289151d9e986a0",
+    "arm64-efi/resource.cpio": "d49ad053797c48c98f07c53c5e4771b254257899e5a40eba082530b72c84562e",
+    "arm64-efi/resource.manifest.sha256": "e6ad3d0f471e303b8e47ed164f420dbaf34f824e18bb2e2ed693f9dfca6f6c40",
+    "host/boot-core-test": "ea613565f917ac91a566d66e9f47272c94d90e019db7f8e6ddac25764a799bf3",
+    "host/boot-storage-fuzz": "074d0cc3989ab36663a36164c7b58fff9d4eac4b262cad0635d66b523a0cc414",
+    "host/boot-storage-read": "b43b861c42b2df564b77421a0f6b9ac8d5a5950b67da223446363de7b97177e2",
+    "host/boot-storage-test": "6511898d496d2237b34159773f649b714c756f0b439a1fddd9e9395e828d3428",
+    "host/resource.cpio": "97bda9c8c7fae0769dc4b4c90bd62488f45a789c69ba8ca4a54c68df47abf3cc",
+    "host/resource.manifest.sha256": "51faefe84ba7665880b969f1f8b9ba021d909396936290d3c0cae9dba300830e",
+    "i386-efi/boot-core.efi": "0b816f062f4d5e8ebbf3f793d92e8d0acc8acf4e0a9471f6fb72f2f8391150da",
+    "i386-efi/resource.cpio": "b31577cfbe50beec7c01cbd2b2f42bdac6e9f350fc3be21d36617c2222b7da56",
+    "i386-efi/resource.manifest.sha256": "879561c87cc9307e6e8834ec4cdaca17689bab7db35196aa989dad4a7f210629",
+    "i386-pc/boot-core.elf": "c08300986ff2e48badbc3781b2a04042dc092b852a71c488376654f8f2034d07",
+    "i386-pc/boot-linux.bz": "36eea5ec0085bc0b58aff5825471748c20af2e9b878ede4e7e03612076940edf",
+    "i386-pc/resource.cpio": "0222915a92466c749446893bed368124f98f1fb49daa09745b9382d4f66e75a9",
+    "i386-pc/resource.manifest.sha256": "71835a608a1749dfc0828439081e68857f992d8399c10a451ad46a449449725a",
+    "loongarch64-efi/boot-core.efi": "594720ee07bc23a1e7bc07084ae4b22d0e5066d0dc7b9a6d43bcf084b767b58b",
+    "loongarch64-efi/resource.cpio": "12f82bf55421a80e15a4519cecb1b2d2c0e8296043d80f1d63022d130fad60d2",
+    "loongarch64-efi/resource.manifest.sha256": "06f9e4b7fafcdb58a8c0e2c9fcf8e0029e0bb348e1c33c9f44d27268a1f895ef",
+    "x86_64-efi/boot-core.efi": "fa6fbade14127ffe42b3a929b064382c9e11575de7b203f1c5989e0d5e4bf47e",
+    "x86_64-efi/resource.cpio": "61ddb5161b1a88373f41f4e19171c2eebd32b6514fd91de86ba7400b84848fe4",
+    "x86_64-efi/resource.manifest.sha256": "f45533020518f9648ee86e3db4c5a8c5b073c842b00da3a6c81990cb6c544e93"
+  },
+  "scope": "Phase 5 loopback and diskfilter slice; cryptodisk deferred",
+  "source_changes": [
+    "patches/grub/0003-diskfilter-lv-cycle.patch"
+  ]
+}

@@ -35,7 +35,7 @@ jobs:
           name: gcc-evidence
           path: build/gcc-smoke/*.log
 
-  phase4:
+  phase5:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
@@ -51,14 +51,14 @@ jobs:
       - name: Build, reproduce and boot every entry
         env:
           SOURCE_DATE_EPOCH: '1704067200'
-        run: python3 tests/phase4.py
+        run: python3 tests/phase5.py
       - name: Host memory and parser sanitizers
         run: |
           python3 tests/storage.py
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: phase4-evidence
+          name: phase5-evidence
           path: |
             build/phase4/*.log
             build/phase4/results.json
@@ -70,3 +70,7 @@ jobs:
             build/phase4/fixtures/manifest.json
             build/storage/commands.log
             build/storage/results.json
+            build/phase5/*.log
+            build/phase5/results.json
+            build/volumes/*.log
+            build/volumes/results.json

@@ -6,6 +6,21 @@
 #define grub_min(a, b) ((a) < (b) ? (a) : (b))
 #define grub_max(a, b) ((a) > (b) ? (a) : (b))
 #define grub_dprintf(...) ((void)0)
+#define ALIGN_UP(n, a) (((n) + (a) - 1) & ~((a) - 1))
+#define grub_printf(...) ((void)0)
+_Noreturn void grub_fatal(const char *, ...);
+char *grub_strchr(const char *, int);
+char *grub_strstr(const char *, const char *);
+unsigned long long grub_strtoull(const char *, const char **, int);
+unsigned long grub_strtoul(const char *, const char **, int);
+static inline int grub_isdigit(int c)
+{
+    return c >= '0' && c <= '9';
+}
+static inline int grub_isspace(int c)
+{
+    return c == ' ' || (c >= 9 && c <= 13);
+}
 void *grub_memcpy(void *, const void *, grub_size_t);
 void *grub_memmove(void *, const void *, grub_size_t);
 void *grub_memset(void *, int, grub_size_t);

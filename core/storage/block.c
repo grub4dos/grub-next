@@ -75,13 +75,14 @@ boot_status_t boot_block_read(const struct boot_slice *v, uint64_t off, void *bu
         return BOOT_E_INVALID;
     TRY(boot_slice_validate(v));
     struct boot_storage *s = v->storage;
-    if (s->busy)
+    uint32_t bit = UINT32_C(1) << v->slot;
+    if (s->busy & bit)
         return BOOT_E_INVALID;
     struct boot_block *b = &s->disks[v->slot];
     uint8_t *p = buf;
     unsigned bits = shift(b->logical_size);
     off += v->offset;
-    s->busy = 1;
+    s->busy |= bit;
     boot_status_t status = BOOT_OK;
     while (n)
     {
@@ -93,9 +94,13 @@ boot_status_t boot_block_read(const struct boot_slice *v, uint64_t off, void *bu
         if (!c->valid || c->generation != v->generation || c->slot != v->slot || c->lba != lba)
         {
             c->valid = 0;
-            status = b->ops->read(b->opaque, lba, 1, c->data);
+            /* A parent read can collide with this cache line. Publish only
+             * after the nested read has finished, from an aligned scratch. */
+            _Alignas(4096) uint8_t scratch[BOOT_BLOCK_MAX];
+            status = b->ops->read(b->opaque, lba, 1, scratch);
             if (status)
                 break;
+            copy(c->data, scratch, b->logical_size);
             c->generation = v->generation;
             c->slot = v->slot;
             c->lba = lba;
@@ -109,6 +114,6 @@ boot_status_t boot_block_read(const struct boot_slice *v, uint64_t off, void *bu
     if (status)
         for (unsigned i = 0; i < BOOT_CACHE_LINES; ++i)
             s->cache[i].valid = 0;
-    s->busy = 0;
+    s->busy &= ~bit;
     return status;
 }

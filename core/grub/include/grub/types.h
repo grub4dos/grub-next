@@ -19,6 +19,7 @@ typedef uint64_t grub_off_t;
 typedef uint64_t grub_disk_addr_t;
 #define GRUB_PACKED __attribute__((packed))
 #define GRUB_UNUSED __attribute__((unused))
+#define GRUB_FILE __FILE__
 #define GRUB_SIZE_MAX SIZE_MAX
 #define GRUB_SSIZE_MAX INTPTR_MAX
 #define GRUB_UINT_MAX UINT32_MAX

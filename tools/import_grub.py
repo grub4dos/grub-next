@@ -16,10 +16,11 @@ DEST = ROOT / "vendor/grub"
 MANIFEST = DEST / "sources.json"
 COMMIT = "2f972128c48b90bf8b63aadffe6d546976e1dee6"
 FS = ["fat", "ext2", "iso9660", "ntfs", "ntfscomp", "fshelp"]
-DISK = ["diskfilter", "lvm", "mdraid_linux", "mdraid_linux_be", "mdraid1x_linux",
+DISK = ["loopback", "diskfilter", "lvm", "mdraid_linux", "mdraid_linux_be", "mdraid1x_linux",
         "raid5_recover", "raid6_recover", "dmraid_nvidia", "ldm"]
+ACTIVE_DISK = {"loopback", "diskfilter", "lvm", "mdraid1x_linux", "raid5_recover", "raid6_recover"}
 HEADERS = ["fshelp", "ntfs", "fat", "datetime", "compiler", "safemath",
-           "diskfilter"]
+           "diskfilter", "list", "lvm"]
 
 
 def digest(data):
@@ -33,8 +34,10 @@ def main():
     if args.import_files:
         subprocess.run(["python3", str(ROOT / "tools/check_references.py")], check=True)
         paths = [(f"grub-core/fs/{name}.c", "phase4") for name in FS]
-        paths += [(f"grub-core/disk/{name}.c", "phase5-staged") for name in DISK]
+        paths += [(f"grub-core/disk/{name}.c", "phase5" if name in ACTIVE_DISK else "staged")
+                  for name in DISK]
         paths += [(f"include/grub/{name}.h", "header") for name in HEADERS]
+        paths += [("grub-core/kern/list.c", "phase5")]
         records = []
         for path, role in paths:
             data = (ROOT / "ref/grub" / path).read_bytes()

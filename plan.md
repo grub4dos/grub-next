@@ -129,6 +129,11 @@ native block sizes、rescan、文件内容和稀疏布局均有验收证据。�
 
 ## 7. Phase 5: Diskfilter and cryptodisk
 
+状态：2026-09-11 完成用户优先指定的 loopback / diskfilter 切片；LVM2 与 MD 1.x
+已经接入共享 runtime，并有五个 target 的实际读取验证。见 `docs/phase5.md`，运行
+`python3 tests/phase5.py`。cryptodisk 及其他预留历史 RAID 格式仍待后续完成，
+不将此切片标为整个 Phase 5 完成。
+
 ### Work
 
 - 尽量原样移植 loopback、cryptodisk 和 diskfilter，沿用 vendor/兼容层/独立补丁分层。

@@ -18,7 +18,7 @@ with tempfile.TemporaryDirectory(prefix="boot-grub-") as directory:
     shutil.copytree(root / "vendor/grub/grub-core", work / "grub-core")
     for patch in sorted((root / "patches/grub").glob("*.patch")):
         subprocess.run(["patch", "--batch", "--fuzz=0", "-p1", "-i", str(patch)], cwd=work, check=True)
-    for source in (work / "grub-core/fs").glob("*.c"):
+    for source in (work / "grub-core").rglob("*.c"):
         target = out / source.name
         target.parent.mkdir(parents=True, exist_ok=True)
         data = source.read_bytes()
